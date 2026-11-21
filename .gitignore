@@ -1,0 +1,23 @@
+# Data and third-party tools are never committed (licensing + size)
+data/raw/
+data/cache/
+data/features/*.npz
+tools/
+.m2repo/
+
+# Build outputs
+target/
+*.class
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Runtime outputs of the app
+runs/
+uploads/
+*.log
