@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><title>Java Mathematical Sandbox Report</title><style>body{font-family:system-ui,sans-serif;background:#0b1120;color:#e2e8f0;margin:24px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(520px,1fr));gap:16px}.card{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:14px}pre{background:#0f172a;padding:12px;border-radius:8px;overflow:auto;font-size:12px}</style></head><body><h1>Java Mathematical Foundations &amp; Learning Paradigms Report (ser-math)</h1><div class='grid'><div class='card'><img src='activations_comparison.svg' width='100%'/></div><div class='card'><img src='optimizer_convergence.svg' width='100%'/></div><div class='card'><img src='svd_reconstruction.svg' width='100%'/></div><div class='card'><img src='rbm_cd1_training.svg' width='100%'/></div><div class='card'><img src='spectrogram_input.svg' width='100%'/></div><div class='card'><img src='conv2d_freq_edges.svg' width='100%'/></div><div class='card'><img src='conv3d_temporal_spectral.svg' width='100%'/></div><div class='card'><img src='svd_rank4.svg' width='100%'/></div></div><h2>Verified Numerical Summary</h2><pre>{
+  "receptiveField5Layer": 18,
+  "svdRank4Error": 0.07172785598657103,
+  "svdRank8Error": 0.0032909847926218595,
+  "gradientCheckMaxRelativeError": 2.7529094067190867E-8,
+  "gradientCheckNumParams": 91,
+  "gradientCheckPassed": true,
+  "optimizerValAcc": {
+    "BATCH_GD": 0.9833333333333333,
+    "SGD": 1.0,
+    "MOMENTUM": 1.0,
+    "NESTEROV": 1.0
+  },
+  "hebbianFinalNorm": 1.998623694853295E8,
+  "ojaFinalNorm": 1.0000659623667507,
+  "ojaPrincipalComponentAlignment": 0.999902835027147,
+  "competitiveInitialQError": 1.1195288212896668,
+  "competitiveFinalQError": 0.45370506731132443,
+  "deltaRuleInitialMse": 1.635611767308356,
+  "deltaRuleFinalMse": 2.0867174705130733E-15,
+  "rbmInitialReconMse": 0.25370688621626564,
+  "rbmFinalReconMse": 0.08399390524280333,
+  "hopfieldInitialEnergy": -1.0,
+  "hopfieldFinalEnergy": -3.0,
+  "hopfieldRecoveryAccuracy": 1.0,
+  "cremaRealMlp": {
+    "status": "COMPLETED",
+    "trainSamples": 4983,
+    "valSamples": 1230,
+    "testSamples": 1228,
+    "parameterCount": 17158,
+    "testAccuracy": 0.504885993485342,
+    "testUAR": 0.5070924517998908,
+    "testMacroF1": 0.5051863496702497
+  }
+}</pre></body></html>

@@ -1,0 +1,34 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='620' height='320' viewBox='0 0 620 320' style='background:#0f172a;font-family:system-ui,Segoe UI,sans-serif'>
+<text x='310' y='24' fill='#f8fafc' font-size='14' font-weight='600' text-anchor='middle'>Neuron Activation Functions (Step vs Sigmoid vs Tanh vs ReLU)</text>
+<line x1='64' y1='264' x2='596' y2='264' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='56' y='268' fill='#94a3b8' font-size='11' text-anchor='end'>-1.21</text>
+<line x1='64' y1='209' x2='596' y2='209' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='56' y='213' fill='#94a3b8' font-size='11' text-anchor='end'>-0.230</text>
+<line x1='64' y1='154' x2='596' y2='154' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='56' y='158' fill='#94a3b8' font-size='11' text-anchor='end'>0.750</text>
+<line x1='64' y1='99' x2='596' y2='99' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='56' y='103' fill='#94a3b8' font-size='11' text-anchor='end'>1.73</text>
+<line x1='64' y1='44' x2='596' y2='44' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='56' y='48' fill='#94a3b8' font-size='11' text-anchor='end'>2.71</text>
+<line x1='64' y1='44' x2='64' y2='264' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='64' y='282' fill='#94a3b8' font-size='11' text-anchor='middle'>-5.00</text>
+<line x1='197' y1='44' x2='197' y2='264' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='197' y='282' fill='#94a3b8' font-size='11' text-anchor='middle'>-2.50</text>
+<line x1='330' y1='44' x2='330' y2='264' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='330' y='282' fill='#94a3b8' font-size='11' text-anchor='middle'>0.00</text>
+<line x1='463' y1='44' x2='463' y2='264' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='463' y='282' fill='#94a3b8' font-size='11' text-anchor='middle'>2.50</text>
+<line x1='596' y1='44' x2='596' y2='264' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='596' y='282' fill='#94a3b8' font-size='11' text-anchor='middle'>5.00</text>
+<rect x='64' y='44' width='532' height='220' fill='none' stroke='#64748b'/>
+<polyline fill='none' stroke='#2563eb' stroke-width='2.2' points='64.0,196.1 77.3,196.1 90.6,196.1 103.9,196.1 117.2,196.1 130.5,196.1 143.8,196.1 157.1,196.1 170.4,196.1 183.7,196.1 197.0,196.1 210.3,196.1 223.6,196.1 236.9,196.1 250.2,196.1 263.5,196.1 276.8,196.1 290.1,196.1 303.4,196.1 316.7,196.1 330.0,140.0 343.3,140.0 356.6,140.0 369.9,140.0 383.2,140.0 396.5,140.0 409.8,140.0 423.1,140.0 436.4,140.0 449.7,140.0 463.0,140.0 476.3,140.0 489.6,140.0 502.9,140.0 516.2,140.0 529.5,140.0 542.8,140.0 556.1,140.0 569.4,140.0 582.7,140.0 596.0,140.0'/>
+<rect x='76' y='303' width='12' height='4' fill='#2563eb'/><text x='92' y='308' fill='#e2e8f0' font-size='11'>Step (McCulloch-Pitts)</text>
+<polyline fill='none' stroke='#dc2626' stroke-width='2.2' points='64.0,195.7 77.3,195.6 90.6,195.5 103.9,195.3 117.2,195.1 130.5,194.8 143.8,194.5 157.1,194.0 170.4,193.4 183.7,192.7 197.0,191.8 210.3,190.7 223.6,189.4 236.9,187.8 250.2,185.9 263.5,183.6 276.8,181.0 290.1,178.1 303.4,174.9 316.7,171.5 330.0,168.0 343.3,164.5 356.6,161.2 369.9,158.0 383.2,155.1 396.5,152.5 409.8,150.2 423.1,148.3 436.4,146.7 449.7,145.3 463.0,144.2 476.3,143.3 489.6,142.6 502.9,142.1 516.2,141.6 529.5,141.3 542.8,141.0 556.1,140.8 569.4,140.6 582.7,140.5 596.0,140.3'/>
+<rect x='261' y='303' width='12' height='4' fill='#dc2626'/><text x='277' y='308' fill='#e2e8f0' font-size='11'>Sigmoid</text>
+<polyline fill='none' stroke='#16a34a' stroke-width='2.2' points='64.0,252.2 77.3,252.2 90.6,252.2 103.9,252.2 117.2,252.2 130.5,252.2 143.8,252.1 157.1,252.1 170.4,251.9 183.7,251.8 197.0,251.5 210.3,251.0 223.6,250.2 236.9,248.9 250.2,246.9 263.5,243.7 276.8,238.8 290.1,231.7 303.4,222.0 316.7,209.8 330.0,196.1 343.3,182.3 356.6,170.2 369.9,160.4 383.2,153.4 396.5,148.5 409.8,145.3 423.1,143.3 436.4,142.0 449.7,141.2 463.0,140.7 476.3,140.4 489.6,140.2 502.9,140.1 516.2,140.1 529.5,140.0 542.8,140.0 556.1,140.0 569.4,140.0 582.7,140.0 596.0,140.0'/>
+<rect x='446' y='303' width='12' height='4' fill='#16a34a'/><text x='462' y='308' fill='#e2e8f0' font-size='11'>Tanh</text>
+<polyline fill='none' stroke='#d97706' stroke-width='2.2' points='64.0,196.1 77.3,196.1 90.6,196.1 103.9,196.1 117.2,196.1 130.5,196.1 143.8,196.1 157.1,196.1 170.4,196.1 183.7,196.1 197.0,196.1 210.3,196.1 223.6,196.1 236.9,196.1 250.2,196.1 263.5,196.1 276.8,196.1 290.1,196.1 303.4,196.1 316.7,196.1 330.0,196.1 343.3,182.1 356.6,168.0 369.9,154.0 383.2,140.0 396.5,125.9 409.8,111.9 423.1,97.9 436.4,83.8 449.7,69.8 463.0,55.8 476.3,55.8 489.6,55.8 502.9,55.8 516.2,55.8 529.5,55.8 542.8,55.8 556.1,55.8 569.4,55.8 582.7,55.8 596.0,55.8'/>
+<rect x='76' y='289' width='12' height='4' fill='#d97706'/><text x='92' y='294' fill='#e2e8f0' font-size='11'>ReLU (clipped view)</text>
+<text x='330' y='298' fill='#cbd5e1' font-size='11' text-anchor='middle'>Pre-activation z</text>
+<text x='14' y='154' fill='#cbd5e1' font-size='11' text-anchor='middle' transform='rotate(-90 14 154)'>Activation f(z)</text>
+</svg>

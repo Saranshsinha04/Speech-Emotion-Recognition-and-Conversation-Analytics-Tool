@@ -1,0 +1,28 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='560' height='290' viewBox='0 0 560 290' style='background:#0f172a;font-family:system-ui,Segoe UI,sans-serif'>
+<text x='280' y='24' fill='#f8fafc' font-size='14' font-weight='600' text-anchor='middle'>RBM Contrastive Divergence (CD-1) Reconstruction Error</text>
+<line x1='64' y1='234' x2='536' y2='234' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='56' y='238' fill='#94a3b8' font-size='11' text-anchor='end'>0.0719</text>
+<line x1='64' y1='186' x2='536' y2='186' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='56' y='190' fill='#94a3b8' font-size='11' text-anchor='end'>0.120</text>
+<line x1='64' y1='139' x2='536' y2='139' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='56' y='143' fill='#94a3b8' font-size='11' text-anchor='end'>0.168</text>
+<line x1='64' y1='91' x2='536' y2='91' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='56' y='95' fill='#94a3b8' font-size='11' text-anchor='end'>0.216</text>
+<line x1='64' y1='44' x2='536' y2='44' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='56' y='48' fill='#94a3b8' font-size='11' text-anchor='end'>0.264</text>
+<line x1='64' y1='44' x2='64' y2='234' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='64' y='252' fill='#94a3b8' font-size='11' text-anchor='middle'>1.00</text>
+<line x1='182' y1='44' x2='182' y2='234' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='182' y='252' fill='#94a3b8' font-size='11' text-anchor='middle'>10.8</text>
+<line x1='300' y1='44' x2='300' y2='234' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='300' y='252' fill='#94a3b8' font-size='11' text-anchor='middle'>20.5</text>
+<line x1='418' y1='44' x2='418' y2='234' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='418' y='252' fill='#94a3b8' font-size='11' text-anchor='middle'>30.3</text>
+<line x1='536' y1='44' x2='536' y2='234' stroke='#334155' stroke-dasharray='3,3'/>
+<text x='536' y='252' fill='#94a3b8' font-size='11' text-anchor='middle'>40.0</text>
+<rect x='64' y='44' width='472' height='190' fill='none' stroke='#64748b'/>
+<polyline fill='none' stroke='#2563eb' stroke-width='2.2' points='64.0,54.2 76.1,84.2 88.2,163.6 100.3,213.2 112.4,213.8 124.5,218.8 136.6,218.3 148.7,214.2 160.8,216.3 172.9,219.2 185.0,219.3 197.1,218.3 209.2,220.4 221.3,219.2 233.4,221.3 245.5,218.4 257.6,219.3 269.7,219.6 281.8,219.2 293.9,218.1 306.1,218.7 318.2,218.9 330.3,220.4 342.4,219.2 354.5,220.1 366.6,221.0 378.7,219.3 390.8,221.7 402.9,220.3 415.0,219.5 427.1,223.8 439.2,222.2 451.3,217.9 463.4,221.4 475.5,221.6 487.6,222.0 499.7,223.0 511.8,222.7 523.9,221.4 536.0,222.0'/>
+<rect x='76' y='273' width='12' height='4' fill='#2563eb'/><text x='92' y='278' fill='#e2e8f0' font-size='11'>RBM Recon MSE</text>
+<text x='300' y='268' fill='#cbd5e1' font-size='11' text-anchor='middle'>Epoch</text>
+<text x='14' y='139' fill='#cbd5e1' font-size='11' text-anchor='middle' transform='rotate(-90 14 139)'>Reconstruction MSE</text>
+</svg>
