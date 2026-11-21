@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Speech Emotion Recognition &amp; Conversation Analytics — Contact-Center Dashboard</title>
+  <style>
+    :root {
+      --bg: #0b1120; --surface: #111827; --card: #1e293b; --border: #334155;
+      --text: #f8fafc; --muted: #94a3b8; --accent: #38bdf8; --ok: #22c55e;
+      --warn: #f59e0b; --danger: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, sans-serif; background: var(--bg); color: var(--text); }
+    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    header h1 { margin: 0; font-size: 18px; font-weight: 700; }
+    .badge { padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #1e3a8a; color: #bfdbfe; border: 1px solid #3b82f6; }
+    nav { display: flex; gap: 8px; padding: 10px 24px; background: var(--surface); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    nav button { background: transparent; color: var(--muted); border: 1px solid transparent; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; }
+    nav button.active { background: var(--card); color: var(--accent); border-color: var(--border); }
+    main { padding: 20px 24px; max-width: 1420px; margin: 0 auto; }
+    .tab { display: none; }
+    .tab.active { display: block; }
+    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 18px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+    .kpi-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .kpi-val { font-size: 26px; font-weight: 700; margin-top: 6px; }
+    .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)); gap: 16px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 600; }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+    .pill-ok { background: rgba(34,197,94,0.16); color: #4ade80; }
+    .pill-esc { background: rgba(239,68,68,0.2); color: #fca5a5; }
+    .pill-neu { background: rgba(148,163,184,0.18); color: #cbd5e1; }
+    .btn { background: #0284c7; color: white; border: none; padding: 8px 14px; border-radius: 7px; font-weight: 600; cursor: pointer; font-size: 13px; }
+    .btn:hover { background: #0369a1; }
+    .policy-banner { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.4); color: #fde68a; padding: 10px 14px; border-radius: 8px; font-size: 12.5px; margin-bottom: 14px; }
+    img.svg-fig { width: 100%; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; }
+    select, input[type=file] { background: var(--card); color: var(--text); border: 1px solid var(--border); padding: 7px 10px; border-radius: 6px; font-size: 13px; }
+    .bar-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; font-size: 12px; }
+    .bar-track { flex: 1; height: 12px; background: #0f172a; border-radius: 6px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--accent); }
+  </style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Contact-Center SER &amp; Conversation Analytics Tool</h1>
+    <div style="font-size:12px;color:var(--muted)">Java 21 + ONNX Runtime (ResNet-SER &amp; Causal Context Transformer) | CREMA-D + RAVDESS</div>
+  </div>
+  <span class="badge">EU AI Act Art. 5(1)(f) Customer-Only Policy Active</span>
+</header>
+
+<nav>
+  <button class="active" onclick="showTab('overview', this)">Dashboard Overview</button>
+  <button onclick="showTab('analysis', this)">Conversation Analysis</button>
+  <button onclick="showTab('research', this)">Research &amp; Benchmarks</button>
+  <button onclick="showTab('math', this)">Math Sandbox &amp; Paradigms</button>
+  <button onclick="showTab('ethics', this)">Responsible AI &amp; Go/No-Go</button>
+</nav>
+
+<main>
+  <!-- TAB 1: OVERVIEW -->
+  <section id="tab-overview" class="tab active">
+    <div class="policy-banner">
+      All emotion predictions are calibrated estimates of <strong>expressed vocal emotion</strong> (never internal psychological state). Customer-only default mode omits agent emotion scoring per EU AI Act Art. 5(1)(f).
+    </div>
+    <div class="kpis" id="overview-kpis"></div>
+    <div class="grid2">
+      <div class="card">
+        <h3>Customer Emotion Distribution (Processed Calls)</h3>
+        <div id="overview-dist"></div>
+      </div>
+      <div class="card">
+        <h3>Processed Contact-Center Calls</h3>
+        <table id="overview-table">
+          <thead><tr><th>Call ID</th><th>Duration</th><th>Turns</th><th>Escalation</th><th>Peak HMM P</th><th>RTF</th><th>Action</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 2: CONVERSATION ANALYSIS -->
+  <section id="tab-analysis" class="tab">
+    <div class="card" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+      <label>Select Call: <select id="conv-select" onchange="loadConversation(this.value)"></select></label>
+      <span style="color:var(--muted)">or Upload WAV (16-bit PCM):</span>
+      <input type="file" id="wav-upload" accept=".wav"/>
+      <button class="btn" onclick="uploadWav()">Analyze WAV in Java ONNX</button>
+      <label style="font-size:12px;color:var(--muted)"><input type="checkbox" id="research-mode-chk"/> Research Mode (show corpus agent channel)</label>
+    </div>
+
+    <div class="card" id="conv-header-card">
+      <div id="conv-summary"></div>
+      <audio id="conv-audio" controls style="width:100%;margin-top:10px"></audio>
+      <div id="conv-risks" style="margin-top:10px"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>Customer Escalation Progression (HMM P(Escalated) &amp; CUSUM)</h3>
+        <svg id="esc-chart" width="100%" height="230" viewBox="0 0 560 230" style="background:#0f172a;border-radius:8px"></svg>
+      </div>
+      <div class="card">
+        <h3>Customer Emotion Transition Matrix (Contextual)</h3>
+        <div id="trans-matrix"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Utterance-by-Utterance Timeline</h3>
+      <table id="utt-table">
+        <thead><tr><th>#</th><th>Time</th><th>Speaker</th><th>Acoustic Est.</th><th>Contextual Est.</th><th>Conf</th><th>HMM Esc P</th><th>CUSUM</th><th>F0 (Hz)</th><th>Events</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- TAB 3: RESEARCH & BENCHMARKS -->
+  <section id="tab-research" class="tab">
+    <div id="research-content">Loading verified results...</div>
+  </section>
+
+  <!-- TAB 4: MATH SANDBOX -->
+  <section id="tab-math" class="tab">
+    <div id="math-content">Loading Java ser-math summary...</div>
+  </section>
+
+  <!-- TAB 5: RESPONSIBLE AI -->
+  <section id="tab-ethics" class="tab">
+    <div class="card">
+      <h3>Responsible AI, Limitations &amp; Go/No-Go Deployment Posture</h3>
+      <ul>
+        <li><strong>Vocal Expression vs Internal State:</strong> Labels reflect perceived/acted vocal emotion in CREMA-D &amp; RAVDESS, never mental health, personality, or true psychological state.</li>
+        <li><strong>EU AI Act Art. 5(1)(f):</strong> Workplace emotion recognition of employees/agents is prohibited in the EU; this product operates in customer-only mode by default.</li>
+        <li><strong>Domain Shift &amp; Telephony Robustness:</strong> Models trained on studio 16 kHz acted audio degrade under low SNR or 8 kHz telephony bandlimiting, and cross-corpus transfer (CREMA-D &rarr; RAVDESS) drops relative to in-corpus speaker-independent scores.</li>
+        <li><strong>Subgroup Fairness &amp; Calibration:</strong> Subgroup UAR across sex, age, and race/ethnicity plus temperature-scaled ECE are reported directly from test splits in the Research tab.</li>
+        <li><strong>Go / No-Go Recommendation:</strong> <em>Conditional Go for Assisted Post-Call Quality Triage</em> (using calibrated HMM/Context Escalation flags as human-in-the-loop review ranking); <em>No-Go for automated punitive action, real-time unsupervised decisions, or employee scoring</em>.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<script>
+let researchCache = null;
+
+function showTab(name, btn) {
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+async function init() {
+  const [ov, convs, res] = await Promise.all([
+    fetch('/api/overview').then(r => r.json()),
+    fetch('/api/conversations').then(r => r.json()),
+    fetch('/api/research').then(r => r.json()),
+  ]);
+  renderOverview(ov, convs);
+  populateConvSelect(convs);
+  if (convs.length > 0) await loadConversation(convs[0].conversationId);
+  researchCache = res;
+  renderResearch(res);
+  renderMath(res.mathSandbox);
+}
+
+function renderOverview(ov, convs) {
+  document.getElementById('overview-kpis').innerHTML = `
+    <div class="card"><div class="kpi-label">Conversations Processed</div><div class="kpi-val">${ov.totalConversations}</div></div>
+    <div class="card"><div class="kpi-label">Escalations Detected</div><div class="kpi-val" style="color:var(--warn)">${ov.escalationsDetected} (${(ov.escalationRate*100).toFixed(0)}%)</div></div>
+    <div class="card"><div class="kpi-label">Avg Processing Latency</div><div class="kpi-val">${ov.avgProcessingMs} ms</div></div>
+    <div class="card"><div class="kpi-label">Avg Real-Time Factor</div><div class="kpi-val" style="color:var(--ok)">${ov.avgRtf}</div></div>
+  `;
+  const distDiv = document.getElementById('overview-dist');
+  distDiv.innerHTML = Object.entries(ov.emotionDistribution || {}).map(([k, v]) => `
+    <div class="bar-row"><span style="width:42px">${k}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${(v*100).toFixed(1)}%"></div></div>
+      <span style="width:48px;text-align:right">${(v*100).toFixed(1)}%</span></div>
+  `).join('');
+
+  const tbody = document.querySelector('#overview-table tbody');
+  tbody.innerHTML = convs.map(c => `
+    <tr>
+      <td><strong>${c.conversationId}</strong></td>
+      <td>${c.totalDurationSec.toFixed(1)}s</td>
+      <td>${c.totalUtterances}</td>
+      <td>${c.escalationDetected ? '<span class="pill pill-esc">ESCALATED</span>' : '<span class="pill pill-ok">STABLE</span>'}</td>
+      <td>${c.peakHmmEscalationProb.toFixed(2)}</td>
+      <td>${c.realTimeFactor.toFixed(4)}</td>
+      <td><button class="btn" style="padding:4px 9px;font-size:11px" onclick="inspectConv('${c.conversationId}')">Inspect</button></td>
+    </tr>
+  `).join('');
+}
+
+function populateConvSelect(convs) {
+  const sel = document.getElementById('conv-select');
+  sel.innerHTML = convs.map(c => `<option value="${c.conversationId}">${c.conversationId} (${c.escalationDetected ? 'Escalated' : 'Stable'})</option>`).join('');
+}
+
+function inspectConv(id) {
+  document.getElementById('conv-select').value = id;
+  loadConversation(id);
+  showTab('analysis', document.querySelectorAll('nav button')[1]);
+}
+
+async function loadConversation(id) {
+  const rep = await fetch('/api/conversations/' + encodeURIComponent(id)).then(r => r.json());
+  document.getElementById('conv-summary').innerHTML = `
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div><strong>${rep.conversationId}</strong> (${rep.audioFileName}, ${rep.totalDurationSec}s, Java Proc: ${rep.processingTimeMs} ms, RTF: ${rep.realTimeFactor})</div>
+      <div>${rep.escalationDetected ? '<span class="pill pill-esc">ESCALATION ALERT</span>' : '<span class="pill pill-ok">NO ESCALATION</span>'}</div>
+    </div>
+    <p style="margin:8px 0 4px;color:#cbd5e1;font-size:13px">${rep.summaryText}</p>
+    <div style="font-size:11px;color:var(--warn)">${rep.policyNotice}</div>
+  `;
+  document.getElementById('conv-audio').src = '/api/audio/' + encodeURIComponent(rep.audioFileName);
+  document.getElementById('conv-risks').innerHTML = (rep.riskIndicators || []).map(r => `<span class="pill pill-neu" style="margin-right:6px">${r}</span>`).join('');
+
+  // Utterance table
+  document.querySelector('#utt-table tbody').innerHTML = rep.utterances.map(u => `
+    <tr>
+      <td>${u.turnIndex}</td>
+      <td>${u.startSec.toFixed(2)}-${u.endSec.toFixed(2)}s</td>
+      <td><strong>${u.speakerId}</strong></td>
+      <td>${u.acousticEmotion} (${(u.acousticConfidence*100).toFixed(0)}%)</td>
+      <td><strong>${u.contextualEmotion}</strong></td>
+      <td>${(u.contextualConfidence*100).toFixed(1)}%</td>
+      <td>${u.speakerId === 'CUSTOMER' ? u.hmmEscalationProb.toFixed(3) : '-'}</td>
+      <td>${u.speakerId === 'CUSTOMER' ? u.cusumScore.toFixed(3) : '-'}</td>
+      <td>${u.f0MeanHz}</td>
+      <td style="font-size:11px">${(u.acousticEvents||[]).join(', ')}</td>
+    </tr>
+  `).join('');
+
+  drawEscalationSvg(rep.utterances.filter(u => u.speakerId === 'CUSTOMER'));
+  drawTransitionMatrix(rep.transitionLabels, rep.transitionMatrix);
+}
+
+function drawEscalationSvg(custTurns) {
+  const svg = document.getElementById('esc-chart');
+  if (!custTurns.length) { svg.innerHTML = ''; return; }
+  const W = 560, H = 230, padL = 44, padR = 20, padT = 22, padB = 34;
+  const pw = W - padL - padR, ph = H - padT - padB;
+  const maxC = Math.max(1.0, ...custTurns.map(u => u.cusumScore));
+  const xOf = i => padL + (i / Math.max(1, custTurns.length - 1)) * pw;
+  const yProb = v => padT + ph - v * ph;
+  const yCus = v => padT + ph - (v / maxC) * ph;
+
+  const hmmPts = custTurns.map((u, i) => `${xOf(i).toFixed(1)},${yProb(u.hmmEscalationProb).toFixed(1)}`).join(' ');
+  const negPts = custTurns.map((u, i) => `${xOf(i).toFixed(1)},${yProb(u.negativeMass).toFixed(1)}`).join(' ');
+  const cusPts = custTurns.map((u, i) => `${xOf(i).toFixed(1)},${yCus(u.cusumScore).toFixed(1)}`).join(' ');
+  const threshY = yProb(0.55).toFixed(1);
+
+  svg.innerHTML = `
+    <line x1="${padL}" y1="${threshY}" x2="${W-padR}" y2="${threshY}" stroke="#ef4444" stroke-dasharray="4,4"/>
+    <text x="${W-padR-4}" y="${threshY-4}" fill="#fca5a5" font-size="10" text-anchor="end">Alert Threshold (0.55)</text>
+    <polyline fill="none" stroke="#64748b" stroke-width="1.8" points="${negPts}"/>
+    <polyline fill="none" stroke="#f59e0b" stroke-width="2.0" points="${cusPts}"/>
+    <polyline fill="none" stroke="#ef4444" stroke-width="2.6" points="${hmmPts}"/>
+    <text x="${padL}" y="14" fill="#ef4444" font-size="11">HMM Escalation Prob</text>
+    <text x="${padL+140}" y="14" fill="#f59e0b" font-size="11">CUSUM</text>
+    <text x="${padL+205}" y="14" fill="#94a3b8" font-size="11">Neg Prob Mass</text>
+    <text x="${W/2}" y="${H-8}" fill="#cbd5e1" font-size="11" text-anchor="middle">Customer Turn Index</text>
+  `;
+}
+
+function drawTransitionMatrix(labels, mat) {
+  if (!labels || !mat) return;
+  let html = '<table><thead><tr><th>From \\ To</th>' + labels.map(l => `<th>${l}</th>`).join('') + '</tr></thead><tbody>';
+  for (let r = 0; r < labels.length; r++) {
+    html += `<tr><th>${labels[r]}</th>` + mat[r].map(v => `<td>${(v*100).toFixed(0)}%</td>`).join('') + '</tr>';
+  }
+  html += '</tbody></table>';
+  document.getElementById('trans-matrix').innerHTML = html;
+}
+
+async function uploadWav() {
+  const inp = document.getElementById('wav-upload');
+  const rm = document.getElementById('research-mode-chk').checked;
+  if (!inp.files.length) { alert('Choose a 16-bit PCM .wav file first.'); return; }
+  const f = inp.files[0];
+  const buf = await f.arrayBuffer();
+  const resp = await fetch('/api/analyze?researchMode=' + rm, {
+    method: 'POST',
+    headers: { 'X-Filename': f.name },
+    body: buf
+  });
+  const rep = await resp.json();
+  if (rep.error) { alert('Error: ' + rep.error); return; }
+  const convs = await fetch('/api/conversations').then(r => r.json());
+  populateConvSelect(convs);
+  document.getElementById('conv-select').value = rep.conversationId;
+  await loadConversation(rep.conversationId);
+}
+
+function renderResearch(res) {
+  const exp = res.experimentResults;
+  if (!exp || exp.status === 'PENDING') {
+    document.getElementById('research-content').innerHTML = '<div class="card">Experiment results are PENDING.</div>';
+    return;
+  }
+  const e2Rows = Object.entries(exp.e2_architectures || {}).map(([k, v]) => `
+    <tr><td><strong>${k}</strong></td><td>${((v.uar_mean ?? v.uar)*100).toFixed(2)}%</td><td>${((v.macro_f1_mean ?? v.macro_f1)*100).toFixed(2)}%</td><td>${((v.accuracy_mean ?? v.accuracy)*100).toFixed(2)}%</td><td>${v.params || '-'}</td><td>${v.train_time_s || '-'}s</td></tr>
+  `).join('');
+
+  const segRows = Object.entries(exp.e8_segdet || {}).map(([k, v]) => `
+    <tr><td><strong>${k}</strong></td><td>${v.task}</td><td>${(v['mAP@0.5']*100).toFixed(2)}%</td><td>${(v.event_f1*100).toFixed(2)}%</td><td>${(v.mean_iou*100).toFixed(1)}%</td><td>${v.latency_ms_per_stream} ms</td></tr>
+  `).join('');
+
+  const ctxRows = Object.entries(exp.e6_e7_context || {}).map(([k, v]) => `
+    <tr><td><strong>${k}</strong></td><td>${((v.uar_mean ?? v.uar)*100).toFixed(2)}%</td><td>${(v.macro_f1*100).toFixed(2)}%</td><td>${(v.turn_accuracy*100).toFixed(2)}%</td><td>${(v.norm_edit_similarity*100).toFixed(2)}%</td><td>${v.conversation_jsd.toFixed(4)}</td></tr>
+  `).join('');
+
+  const escRows = Object.entries(exp.e11_escalation?.detectors || {}).map(([k, v]) => `
+    <tr><td><strong>${k}</strong></td><td>${v.auprc.toFixed(4)}</td><td>${v.auroc.toFixed(4)}</td><td>${v.event_f1.toFixed(4)}</td><td>${v.median_delay_turns}</td><td>${v.false_alarm_rate_per_track.toFixed(3)}</td></tr>
+  `).join('');
+
+  document.getElementById('research-content').innerHTML = `
+    <div class="grid2">
+      <div class="card"><h3>E2: Utterance Architecture Benchmark (CREMA-D Speaker-Independent)</h3>
+        <table><thead><tr><th>Model</th><th>UAR</th><th>Macro-F1</th><th>Acc</th><th>Params</th><th>Time</th></tr></thead><tbody>${e2Rows}</tbody></table>
+      </div>
+      <div class="card"><h3>E8-SegDet: Segmentation &amp; Detection Benchmark</h3>
+        <table><thead><tr><th>Model</th><th>Task</th><th>mAP@0.5</th><th>Event F1</th><th>IoU</th><th>Latency</th></tr></thead><tbody>${segRows}</tbody></table>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card"><h3>Stage C: Conversational Context Benchmark (CREMA-Dialog)</h3>
+        <table><thead><tr><th>Model</th><th>UAR</th><th>Macro-F1</th><th>Seq Acc</th><th>Edit Sim</th><th>JSD (lower=better)</th></tr></thead><tbody>${ctxRows}</tbody></table>
+        <p style="font-size:12px;color:var(--muted);margin-top:8px">H2 Bootstrap 95% CI vs No-Context: [${exp.h2_bootstrap_vs_nocontext.ci95_low}, ${exp.h2_bootstrap_vs_nocontext.ci95_high}], vs HMM: [${exp.h2_bootstrap_vs_hmm.ci95_low}, ${exp.h2_bootstrap_vs_hmm.ci95_high}]</p>
+      </div>
+      <div class="card"><h3>E11: Frustration Escalation Detectors</h3>
+        <table><thead><tr><th>Detector</th><th>AUPRC</th><th>AUROC</th><th>Event F1</th><th>Delay</th><th>FA/Track</th></tr></thead><tbody>${escRows}</tbody></table>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card"><img class="svg-fig" src="/api/figures/e1_e2_model_benchmark.svg"/></div>
+      <div class="card"><img class="svg-fig" src="/api/figures/e6_e7_context_and_agreement.svg"/></div>
+      <div class="card"><img class="svg-fig" src="/api/figures/e8_segdet_benchmark.svg"/></div>
+      <div class="card"><img class="svg-fig" src="/api/figures/conv_activations_gradcam.svg"/></div>
+      <div class="card"><img class="svg-fig" src="/api/figures/latent_space_and_activations.svg"/></div>
+      <div class="card"><img class="svg-fig" src="/api/figures/confusion_matrix_and_calibration.svg"/></div>
+      <div class="card"><img class="svg-fig" src="/api/figures/escalation_and_robustness.svg"/></div>
+    </div>
+  `;
+}
+
+function renderMath(ms) {
+  if (!ms || ms.status === 'PENDING') {
+    document.getElementById('math-content').innerHTML = '<div class="card">Math Sandbox results PENDING.</div>';
+    return;
+  }
+  document.getElementById('math-content').innerHTML = `
+    <div class="card">
+      <h3>Java ser-math Verification &amp; Paradigms Summary</h3>
+      <p>Gradient Check Max Relative Error: <strong>${ms.gradientCheckMaxRelativeError}</strong> (${ms.gradientCheckNumParams} params, Passed=${ms.gradientCheckPassed}) |
+      Oja vs SVD Cosine Alignment: <strong>${ms.ojaPrincipalComponentAlignment.toFixed(5)}</strong> |
+      Hopfield Recovery Accuracy: <strong>${(ms.hopfieldRecoveryAccuracy*100).toFixed(0)}%</strong></p>
+      <p style="font-size:12.5px;color:#cbd5e1">Real CREMA-D Functionals Java MLP: ${JSON.stringify(ms.cremaRealMlp)}</p>
+    </div>
+    <div class="grid2">
+      <div class="card"><img class="svg-fig" src="/api/figures/math/activations_comparison.svg"/></div>
+      <div class="card"><img class="svg-fig" src="/api/figures/math/optimizer_convergence.svg"/></div>
+      <div class="card"><img class="svg-fig" src="/api/figures/math/svd_reconstruction.svg"/></div>
+      <div class="card"><img class="svg-fig" src="/api/figures/math/rbm_cd1_training.svg"/></div>
+      <div class="card"><img class="svg-fig" src="/api/figures/math/conv2d_freq_edges.svg"/></div>
+      <div class="card"><img class="svg-fig" src="/api/figures/math/conv3d_temporal_spectral.svg"/></div>
+    </div>
+  `;
+}
+
+init();
+</script>
+</body>
+</html>

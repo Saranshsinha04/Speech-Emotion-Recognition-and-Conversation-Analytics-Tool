@@ -1,0 +1,468 @@
+{
+  "conversationId": "sample_routine_neutral",
+  "audioFileName": "sample_routine_neutral.wav",
+  "totalDurationSec": 28.058,
+  "totalUtterances": 10,
+  "customerOnlyPolicyMode": true,
+  "policyNotice": "CUSTOMER-ONLY POLICY ACTIVE (EU AI Act Art. 5(1)(f)): Employee/agent vocal emotion inference disabled.",
+  "processingTimeMs": 239.29,
+  "realTimeFactor": 0.00853,
+  "customerEmotionDistribution": {
+    "NEU": 0.0335,
+    "HAP": 0.0963,
+    "SAD": 0.3108,
+    "ANG": 0.0359,
+    "FEA": 0.0039,
+    "DIS": 0.5196
+  },
+  "transitionMatrix": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "transitionLabels": [
+    "NEU",
+    "HAP",
+    "SAD",
+    "ANG",
+    "FEA",
+    "DIS"
+  ],
+  "escalationDetected": true,
+  "escalationOnsetTurn": 2,
+  "escalationOnsetSec": 5.36,
+  "peakHmmEscalationProb": 0.9174,
+  "peakCusumScore": 1.3031,
+  "riskIndicators": [
+    "ESCALATION_DETECTED: Customer vocal distress escalated at turn 2 (5.36s, peak HMM prob\u003d0.92)",
+    "SUSTAINED_NEGATIVE_AFFECT: High-arousal negative mass (ANG+DIS) \u003d 55.6%",
+    "REPEATED_HIGH_VOCAL_INTENSITY: Multiple raised-voice customer segments"
+  ],
+  "summaryText": "Processed \u0027sample_routine_neutral.wav\u0027 (28.1s, 5 customer turns). Dominant estimated customer expression: DIS (52.0%). Escalation status: ESCALATION_ALERT (peak HMM P\u003d0.92, onset turn\u003d2). Note: Outputs are probabilistic vocal expression estimates, not psychological facts.",
+  "utterances": [
+    {
+      "turnIndex": 0,
+      "speakerId": "CUSTOMER",
+      "redactedByWorkplacePolicy": false,
+      "startSec": 0.42,
+      "endSec": 1.74,
+      "acousticEmotion": "NEU",
+      "acousticConfidence": 0.8298,
+      "contextualEmotion": "SAD",
+      "contextualConfidence": 0.4807,
+      "contextualProbabilities": {
+        "NEU": 0.0366,
+        "HAP": 0.051,
+        "SAD": 0.4807,
+        "ANG": 0.0261,
+        "FEA": 0.0058,
+        "DIS": 0.3998
+      },
+      "negativeMass": 0.9067,
+      "cusumScore": 0.301,
+      "hmmEscalationProb": 0.3734,
+      "transformerEscalationProb": 0.0259,
+      "f0MeanHz": 178.3,
+      "preRmsDb": -18.6,
+      "spectralCentroidKhz": 1.423,
+      "acousticEvents": [
+        "HIGH_VOCAL_INTENSITY"
+      ]
+    },
+    {
+      "turnIndex": 1,
+      "speakerId": "AGENT",
+      "redactedByWorkplacePolicy": true,
+      "startSec": 2.5,
+      "endSec": 4.16,
+      "acousticEmotion": "REDACTED_POLICY",
+      "acousticConfidence": 0.0,
+      "contextualEmotion": "REDACTED_POLICY",
+      "contextualConfidence": 0.0,
+      "contextualProbabilities": {},
+      "negativeMass": 0.0,
+      "cusumScore": 0.0,
+      "hmmEscalationProb": 0.0,
+      "transformerEscalationProb": 0.0,
+      "f0MeanHz": 171.1,
+      "preRmsDb": -18.7,
+      "spectralCentroidKhz": 1.397,
+      "acousticEvents": [
+        "HIGH_VOCAL_INTENSITY"
+      ]
+    },
+    {
+      "turnIndex": 2,
+      "speakerId": "CUSTOMER",
+      "redactedByWorkplacePolicy": false,
+      "startSec": 5.36,
+      "endSec": 6.16,
+      "acousticEmotion": "HAP",
+      "acousticConfidence": 0.6157,
+      "contextualEmotion": "DIS",
+      "contextualConfidence": 0.6329,
+      "contextualProbabilities": {
+        "NEU": 0.0442,
+        "HAP": 0.0429,
+        "SAD": 0.2321,
+        "ANG": 0.0436,
+        "FEA": 0.0043,
+        "DIS": 0.6329
+      },
+      "negativeMass": 0.9086,
+      "cusumScore": 0.6039,
+      "hmmEscalationProb": 0.6395,
+      "transformerEscalationProb": 0.0258,
+      "f0MeanHz": 199.2,
+      "preRmsDb": -18.9,
+      "spectralCentroidKhz": 1.296,
+      "acousticEvents": [
+        "HIGH_VOCAL_INTENSITY",
+        "SHORT_BURST"
+      ]
+    },
+    {
+      "turnIndex": 3,
+      "speakerId": "AGENT",
+      "redactedByWorkplacePolicy": true,
+      "startSec": 8.74,
+      "endSec": 10.36,
+      "acousticEmotion": "REDACTED_POLICY",
+      "acousticConfidence": 0.0,
+      "contextualEmotion": "REDACTED_POLICY",
+      "contextualConfidence": 0.0,
+      "contextualProbabilities": {},
+      "negativeMass": 0.0,
+      "cusumScore": 0.0,
+      "hmmEscalationProb": 0.0,
+      "transformerEscalationProb": 0.0,
+      "f0MeanHz": 170.0,
+      "preRmsDb": -21.6,
+      "spectralCentroidKhz": 1.663,
+      "acousticEvents": [
+        "HIGH_VOCAL_INTENSITY"
+      ]
+    },
+    {
+      "turnIndex": 4,
+      "speakerId": "CUSTOMER",
+      "redactedByWorkplacePolicy": false,
+      "startSec": 11.22,
+      "endSec": 13.68,
+      "acousticEmotion": "NEU",
+      "acousticConfidence": 0.7946,
+      "contextualEmotion": "DIS",
+      "contextualConfidence": 0.4382,
+      "contextualProbabilities": {
+        "NEU": 0.0323,
+        "HAP": 0.2183,
+        "SAD": 0.271,
+        "ANG": 0.0379,
+        "FEA": 0.0024,
+        "DIS": 0.4382
+      },
+      "negativeMass": 0.747,
+      "cusumScore": 0.7452,
+      "hmmEscalationProb": 0.7418,
+      "transformerEscalationProb": 0.0236,
+      "f0MeanHz": 165.4,
+      "preRmsDb": -20.6,
+      "spectralCentroidKhz": 1.398,
+      "acousticEvents": [
+        "HIGH_VOCAL_INTENSITY"
+      ]
+    },
+    {
+      "turnIndex": 5,
+      "speakerId": "AGENT",
+      "redactedByWorkplacePolicy": true,
+      "startSec": 13.84,
+      "endSec": 16.68,
+      "acousticEmotion": "REDACTED_POLICY",
+      "acousticConfidence": 0.0,
+      "contextualEmotion": "REDACTED_POLICY",
+      "contextualConfidence": 0.0,
+      "contextualProbabilities": {},
+      "negativeMass": 0.0,
+      "cusumScore": 0.0,
+      "hmmEscalationProb": 0.0,
+      "transformerEscalationProb": 0.0,
+      "f0MeanHz": 121.5,
+      "preRmsDb": -19.4,
+      "spectralCentroidKhz": 1.181,
+      "acousticEvents": [
+        "HIGH_VOCAL_INTENSITY"
+      ]
+    },
+    {
+      "turnIndex": 6,
+      "speakerId": "CUSTOMER",
+      "redactedByWorkplacePolicy": false,
+      "startSec": 17.26,
+      "endSec": 18.6,
+      "acousticEmotion": "NEU",
+      "acousticConfidence": 0.7111,
+      "contextualEmotion": "DIS",
+      "contextualConfidence": 0.55,
+      "contextualProbabilities": {
+        "NEU": 0.0333,
+        "HAP": 0.0804,
+        "SAD": 0.3134,
+        "ANG": 0.02,
+        "FEA": 0.0029,
+        "DIS": 0.55
+      },
+      "negativeMass": 0.8834,
+      "cusumScore": 1.0229,
+      "hmmEscalationProb": 0.8597,
+      "transformerEscalationProb": 0.113,
+      "f0MeanHz": 170.8,
+      "preRmsDb": -18.5,
+      "spectralCentroidKhz": 1.418,
+      "acousticEvents": [
+        "HIGH_VOCAL_INTENSITY"
+      ]
+    },
+    {
+      "turnIndex": 7,
+      "speakerId": "AGENT",
+      "redactedByWorkplacePolicy": true,
+      "startSec": 19.28,
+      "endSec": 22.62,
+      "acousticEmotion": "REDACTED_POLICY",
+      "acousticConfidence": 0.0,
+      "contextualEmotion": "REDACTED_POLICY",
+      "contextualConfidence": 0.0,
+      "contextualProbabilities": {},
+      "negativeMass": 0.0,
+      "cusumScore": 0.0,
+      "hmmEscalationProb": 0.0,
+      "transformerEscalationProb": 0.0,
+      "f0MeanHz": 121.5,
+      "preRmsDb": -22.3,
+      "spectralCentroidKhz": 1.479,
+      "acousticEvents": [
+        "HIGH_VOCAL_INTENSITY",
+        "SUSTAINED_TURN"
+      ]
+    },
+    {
+      "turnIndex": 8,
+      "speakerId": "CUSTOMER",
+      "redactedByWorkplacePolicy": false,
+      "startSec": 22.98,
+      "endSec": 24.7,
+      "acousticEmotion": "NEU",
+      "acousticConfidence": 0.8312,
+      "contextualEmotion": "DIS",
+      "contextualConfidence": 0.577,
+      "contextualProbabilities": {
+        "NEU": 0.0212,
+        "HAP": 0.0887,
+        "SAD": 0.2568,
+        "ANG": 0.0521,
+        "FEA": 0.0041,
+        "DIS": 0.577
+      },
+      "negativeMass": 0.8859,
+      "cusumScore": 1.3031,
+      "hmmEscalationProb": 0.9174,
+      "transformerEscalationProb": 0.2755,
+      "f0MeanHz": 163.6,
+      "preRmsDb": -21.8,
+      "spectralCentroidKhz": 1.512,
+      "acousticEvents": [
+        "HIGH_VOCAL_INTENSITY"
+      ]
+    },
+    {
+      "turnIndex": 9,
+      "speakerId": "AGENT",
+      "redactedByWorkplacePolicy": true,
+      "startSec": 25.76,
+      "endSec": 27.42,
+      "acousticEmotion": "REDACTED_POLICY",
+      "acousticConfidence": 0.0,
+      "contextualEmotion": "REDACTED_POLICY",
+      "contextualConfidence": 0.0,
+      "contextualProbabilities": {},
+      "negativeMass": 0.0,
+      "cusumScore": 0.0,
+      "hmmEscalationProb": 0.0,
+      "transformerEscalationProb": 0.0,
+      "f0MeanHz": 143.1,
+      "preRmsDb": -20.1,
+      "spectralCentroidKhz": 1.541,
+      "acousticEvents": [
+        "HIGH_VOCAL_INTENSITY"
+      ]
+    }
+  ],
+  "attentionMatrix": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.47315216064453125,
+      0.5268478393554688,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.4113035500049591,
+      0.20428161323070526,
+      0.3844148516654968,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.2671138048171997,
+      0.27095064520835876,
+      0.2594810128211975,
+      0.2024545669555664,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.3339790105819702,
+      0.14440611004829407,
+      0.2759189009666443,
+      0.11176136136054993,
+      0.13393454253673553,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.25271713733673096,
+      0.19643054902553558,
+      0.19555410742759705,
+      0.13142803311347961,
+      0.14665645360946655,
+      0.07721371203660965,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.2526493966579437,
+      0.13792350888252258,
+      0.19583633542060852,
+      0.08857536315917969,
+      0.1321900337934494,
+      0.027753673493862152,
+      0.16507169604301453,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.20068497955799103,
+      0.1712362915277481,
+      0.16065028309822083,
+      0.0960593968629837,
+      0.12157148122787476,
+      0.059343189001083374,
+      0.12319270521402359,
+      0.06726167351007462,
+      0.0,
+      0.0
+    ],
+    [
+      0.1984892636537552,
+      0.11688408255577087,
+      0.176642045378685,
+      0.08351960778236389,
+      0.11274795234203339,
+      0.026936952024698257,
+      0.12272614240646362,
+      0.0294891856610775,
+      0.13256481289863586,
+      0.0
+    ],
+    [
+      0.18075895309448242,
+      0.12509867548942566,
+      0.14804524183273315,
+      0.07782725989818573,
+      0.09264107048511505,
+      0.022820336744189262,
+      0.11901538074016571,
+      0.02620731294155121,
+      0.13366958498954773,
+      0.07391618937253952
+    ]
+  ]
+}
