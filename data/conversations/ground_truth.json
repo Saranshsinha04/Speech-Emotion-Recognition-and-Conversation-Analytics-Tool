@@ -1,0 +1,304 @@
+[
+  {
+    "file": "sample_escalating_gradual.wav",
+    "dialog_id": "CREMA-D_DLG_0300",
+    "archetype": "escalating_gradual",
+    "is_escalating": false,
+    "escalation_onset_customer_turn": null,
+    "total_duration_s": 29.559,
+    "intervals": [
+      {
+        "turn": 0,
+        "speaker": "CUSTOMER",
+        "start_s": 0.0,
+        "end_s": 3.47,
+        "emotion": "NEU",
+        "utterance_id": "1004_TAI_NEU_XX"
+      },
+      {
+        "turn": 1,
+        "speaker": "AGENT",
+        "start_s": 3.82,
+        "end_s": 5.755,
+        "emotion": "HAP",
+        "utterance_id": "1031_IEO_HAP_HI"
+      },
+      {
+        "turn": 2,
+        "speaker": "CUSTOMER",
+        "start_s": 6.105,
+        "end_s": 9.142,
+        "emotion": "DIS",
+        "utterance_id": "1004_TSI_DIS_XX"
+      },
+      {
+        "turn": 3,
+        "speaker": "AGENT",
+        "start_s": 9.492,
+        "end_s": 11.894,
+        "emotion": "HAP",
+        "utterance_id": "1031_DFA_HAP_XX"
+      },
+      {
+        "turn": 4,
+        "speaker": "CUSTOMER",
+        "start_s": 12.244,
+        "end_s": 14.613,
+        "emotion": "ANG",
+        "utterance_id": "1004_TSI_ANG_XX"
+      },
+      {
+        "turn": 5,
+        "speaker": "AGENT",
+        "start_s": 14.963,
+        "end_s": 16.598,
+        "emotion": "HAP",
+        "utterance_id": "1031_IEO_HAP_MD"
+      },
+      {
+        "turn": 6,
+        "speaker": "CUSTOMER",
+        "start_s": 16.948,
+        "end_s": 20.018,
+        "emotion": "ANG",
+        "utterance_id": "1004_DFA_ANG_XX"
+      },
+      {
+        "turn": 7,
+        "speaker": "AGENT",
+        "start_s": 20.368,
+        "end_s": 23.037,
+        "emotion": "NEU",
+        "utterance_id": "1031_ITH_NEU_XX"
+      },
+      {
+        "turn": 8,
+        "speaker": "CUSTOMER",
+        "start_s": 23.387,
+        "end_s": 26.323,
+        "emotion": "DIS",
+        "utterance_id": "1004_IWW_DIS_XX"
+      },
+      {
+        "turn": 9,
+        "speaker": "AGENT",
+        "start_s": 26.673,
+        "end_s": 29.209,
+        "emotion": "HAP",
+        "utterance_id": "1031_IWL_HAP_XX"
+      }
+    ]
+  },
+  {
+    "file": "sample_resolved.wav",
+    "dialog_id": "CREMA-D_DLG_0302",
+    "archetype": "resolved",
+    "is_escalating": false,
+    "escalation_onset_customer_turn": null,
+    "total_duration_s": 38.1,
+    "intervals": [
+      {
+        "turn": 0,
+        "speaker": "CUSTOMER",
+        "start_s": 0.0,
+        "end_s": 3.17,
+        "emotion": "DIS",
+        "utterance_id": "1045_IWL_DIS_XX"
+      },
+      {
+        "turn": 1,
+        "speaker": "AGENT",
+        "start_s": 3.52,
+        "end_s": 5.589,
+        "emotion": "NEU",
+        "utterance_id": "1039_DFA_NEU_XX"
+      },
+      {
+        "turn": 2,
+        "speaker": "CUSTOMER",
+        "start_s": 5.939,
+        "end_s": 9.242,
+        "emotion": "ANG",
+        "utterance_id": "1045_TIE_ANG_XX"
+      },
+      {
+        "turn": 3,
+        "speaker": "AGENT",
+        "start_s": 9.592,
+        "end_s": 11.928,
+        "emotion": "HAP",
+        "utterance_id": "1039_TSI_HAP_XX"
+      },
+      {
+        "turn": 4,
+        "speaker": "CUSTOMER",
+        "start_s": 12.278,
+        "end_s": 14.747,
+        "emotion": "SAD",
+        "utterance_id": "1045_MTI_SAD_XX"
+      },
+      {
+        "turn": 5,
+        "speaker": "AGENT",
+        "start_s": 15.097,
+        "end_s": 17.199,
+        "emotion": "NEU",
+        "utterance_id": "1039_ITS_NEU_XX"
+      },
+      {
+        "turn": 6,
+        "speaker": "CUSTOMER",
+        "start_s": 17.549,
+        "end_s": 19.651,
+        "emotion": "HAP",
+        "utterance_id": "1045_IEO_HAP_MD"
+      },
+      {
+        "turn": 7,
+        "speaker": "AGENT",
+        "start_s": 20.001,
+        "end_s": 22.403,
+        "emotion": "NEU",
+        "utterance_id": "1039_TAI_NEU_XX"
+      },
+      {
+        "turn": 8,
+        "speaker": "CUSTOMER",
+        "start_s": 22.753,
+        "end_s": 24.722,
+        "emotion": "NEU",
+        "utterance_id": "1045_IEO_NEU_XX"
+      },
+      {
+        "turn": 9,
+        "speaker": "AGENT",
+        "start_s": 25.072,
+        "end_s": 27.474,
+        "emotion": "HAP",
+        "utterance_id": "1039_WSI_HAP_XX"
+      },
+      {
+        "turn": 10,
+        "speaker": "CUSTOMER",
+        "start_s": 27.824,
+        "end_s": 29.793,
+        "emotion": "NEU",
+        "utterance_id": "1045_IEO_NEU_XX"
+      },
+      {
+        "turn": 11,
+        "speaker": "AGENT",
+        "start_s": 30.143,
+        "end_s": 32.112,
+        "emotion": "NEU",
+        "utterance_id": "1039_TSI_NEU_XX"
+      },
+      {
+        "turn": 12,
+        "speaker": "CUSTOMER",
+        "start_s": 32.462,
+        "end_s": 34.931,
+        "emotion": "HAP",
+        "utterance_id": "1045_ITH_HAP_XX"
+      },
+      {
+        "turn": 13,
+        "speaker": "AGENT",
+        "start_s": 35.281,
+        "end_s": 37.75,
+        "emotion": "NEU",
+        "utterance_id": "1039_ITH_NEU_XX"
+      }
+    ]
+  },
+  {
+    "file": "sample_routine_neutral.wav",
+    "dialog_id": "CREMA-D_DLG_0303",
+    "archetype": "routine_neutral",
+    "is_escalating": false,
+    "escalation_onset_customer_turn": null,
+    "total_duration_s": 28.058,
+    "intervals": [
+      {
+        "turn": 0,
+        "speaker": "CUSTOMER",
+        "start_s": 0.0,
+        "end_s": 2.102,
+        "emotion": "NEU",
+        "utterance_id": "1023_DFA_NEU_XX"
+      },
+      {
+        "turn": 1,
+        "speaker": "AGENT",
+        "start_s": 2.452,
+        "end_s": 4.754,
+        "emotion": "NEU",
+        "utterance_id": "1064_DFA_NEU_XX"
+      },
+      {
+        "turn": 2,
+        "speaker": "CUSTOMER",
+        "start_s": 5.104,
+        "end_s": 6.706,
+        "emotion": "HAP",
+        "utterance_id": "1023_IEO_HAP_LO"
+      },
+      {
+        "turn": 3,
+        "speaker": "AGENT",
+        "start_s": 7.056,
+        "end_s": 10.493,
+        "emotion": "HAP",
+        "utterance_id": "1064_WSI_HAP_XX"
+      },
+      {
+        "turn": 4,
+        "speaker": "CUSTOMER",
+        "start_s": 10.843,
+        "end_s": 13.546,
+        "emotion": "NEU",
+        "utterance_id": "1023_TIE_NEU_XX"
+      },
+      {
+        "turn": 5,
+        "speaker": "AGENT",
+        "start_s": 13.896,
+        "end_s": 16.498,
+        "emotion": "HAP",
+        "utterance_id": "1064_IWL_HAP_XX"
+      },
+      {
+        "turn": 6,
+        "speaker": "CUSTOMER",
+        "start_s": 16.848,
+        "end_s": 18.95,
+        "emotion": "NEU",
+        "utterance_id": "1023_DFA_NEU_XX"
+      },
+      {
+        "turn": 7,
+        "speaker": "AGENT",
+        "start_s": 19.3,
+        "end_s": 22.537,
+        "emotion": "NEU",
+        "utterance_id": "1064_TIE_NEU_XX"
+      },
+      {
+        "turn": 8,
+        "speaker": "CUSTOMER",
+        "start_s": 22.887,
+        "end_s": 25.022,
+        "emotion": "NEU",
+        "utterance_id": "1023_WSI_NEU_XX"
+      },
+      {
+        "turn": 9,
+        "speaker": "AGENT",
+        "start_s": 25.372,
+        "end_s": 27.708,
+        "emotion": "NEU",
+        "utterance_id": "1064_ITS_NEU_XX"
+      }
+    ]
+  }
+]

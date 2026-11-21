@@ -1,0 +1,36 @@
+{
+  "models": [
+    {
+      "name": "resnet_ser",
+      "version": "1.0.0",
+      "file": "resnet_ser.onnx",
+      "sha256": "ed2c3139a018e9baf15d2625a60afad68fd01020a0a4858dcab138ed583ea422",
+      "opset": 17,
+      "dataset": "CREMA-D (speaker-independent 64/13/14)",
+      "classes": [
+        "NEU",
+        "HAP",
+        "SAD",
+        "ANG",
+        "FEA",
+        "DIS"
+      ]
+    },
+    {
+      "name": "context_transformer",
+      "version": "1.0.0",
+      "file": "context_transformer.onnx",
+      "sha256": "9e30de126f651d5b6f9b3be40fbd8e805e6b8da79342ab859d196c3118b59b67",
+      "opset": 17,
+      "dataset": "CREMA-Dialog (cross-fitted ResNet embeddings)",
+      "classes": [
+        "NEU",
+        "HAP",
+        "SAD",
+        "ANG",
+        "FEA",
+        "DIS"
+      ]
+    }
+  ]
+}

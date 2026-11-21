@@ -1,0 +1,59 @@
+{
+  "crema_d": {
+    "total_files_scanned": 7442,
+    "valid_utterances": 7441,
+    "excluded_files": [
+      {
+        "path": "1076_MTI_SAD_XX.wav",
+        "reason": "dur=2.57,peak=0.00000,sil=1.00"
+      }
+    ],
+    "exact_sha256_duplicates": 3,
+    "near_duplicates_cosine_gt_099995": 4,
+    "total_actors": 91,
+    "split_utterances": {
+      "train": 4983,
+      "val": 1230,
+      "test": 1228
+    },
+    "split_actors": {
+      "train": 61,
+      "val": 15,
+      "test": 15
+    },
+    "emotion_counts": {
+      "NEU": 1087,
+      "HAP": 1271,
+      "SAD": 1270,
+      "ANG": 1271,
+      "FEA": 1271,
+      "DIS": 1271
+    },
+    "mean_snr_db": 20.21,
+    "mean_duration_s": 2.543,
+    "mean_voice_agreement": 0.637,
+    "license": "ODbL v1.0 / DbCL v1.0"
+  },
+  "ravdess": {
+    "total_files_scanned": 1440,
+    "valid_utterances": 1440,
+    "excluded_files": 0,
+    "total_actors": 24,
+    "shared_6class_count": 1056,
+    "shared_4class_count": 672,
+    "mean_snr_db": 67.37,
+    "mean_duration_s": 3.701,
+    "license": "CC BY-NC-SA 4.0"
+  },
+  "crema_dialog": {
+    "total_dialogs": 380,
+    "test_dialogs": 80,
+    "escalating_test_dialogs": 28,
+    "non_escalating_test_dialogs": 52
+  },
+  "ravdess_dialog": {
+    "total_dialogs": 40,
+    "escalating_dialogs": 13
+  },
+  "speaker_overlap_assertion": "PASSED (0 overlapping actors across train/val/test)"
+}
