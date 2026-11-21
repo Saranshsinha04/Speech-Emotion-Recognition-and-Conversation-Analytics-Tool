@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Final Presentation — SER &amp; Conversation Analytics for Contact Centers</title>
+  <style>
+    body { margin: 0; font-family: system-ui, Segoe UI, sans-serif; background: #0b1120; color: #f8fafc; }
+    .controls { position: fixed; bottom: 16px; right: 20px; z-index: 100; display: flex; gap: 8px; align-items: center; background: #1e293b; padding: 8px 14px; border-radius: 999px; border: 1px solid #334155; }
+    .controls button { background: #0284c7; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .slide { display: none; min-height: 100vh; padding: 48px 72px; box-sizing: border-box; flex-direction: column; justify-content: center; }
+    .slide.active { display: flex; }
+    h1 { font-size: 34px; color: #38bdf8; margin-bottom: 12px; }
+    h2 { font-size: 28px; color: #38bdf8; margin-top: 0; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+    ul { font-size: 18px; line-height: 1.65; color: #e2e8f0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 15px; }
+    th, td { border-bottom: 1px solid #334155; padding: 9px 12px; text-align: left; }
+    th { color: #94a3b8; }
+    .tag { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 13px; font-weight: 700; }
+    .go { background: rgba(34,197,94,0.2); color: #4ade80; }
+    .nogo { background: rgba(239,68,68,0.2); color: #fca5a5; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: center; }
+    img { max-width: 100%; border-radius: 8px; border: 1px solid #334155; }
+  </style>
+</head>
+<body>
+<div class="controls">
+  <button onclick="go(-1)">Prev</button>
+  <span id="counter">1 / 12</span>
+  <button onclick="go(1)">Next</button>
+</div>
+
+<section class="slide active">
+  <h1>Speech Emotion Recognition &amp; Conversation Analytics Tool for Contact Centers</h1>
+  <p style="font-size:20px;color:#94a3b8">Academic-Industry Deep Learning Research &amp; Java 21 / ONNX Production System</p>
+  <ul>
+    <li><strong>Core Research Question:</strong> Does combining acoustic CNNs with conversational context improve emotion classification, detect frustration escalation, and support practical deployment?</li>
+    <li><strong>Stack:</strong> Pure-Java Mathematical Sandbox (<code>ser-math</code>), Java 21 + ONNX Runtime (<code>ser-app</code>), PyTorch (<code>research/</code>), Maven 3.9.9.</li>
+    <li><strong>Compliance Posture:</strong> Customer-Only Default Mode per EU AI Act Article 5(1)(f).</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <h2>1. Corpora, Audit &amp; Speaker-Disjoint Splits</h2>
+  <table>
+    <thead><tr><th>Dataset</th><th>Files</th><th>Speakers</th><th>Partition / Role</th><th>Audit Findings</th></tr></thead>
+    <tbody>
+      <tr><td><strong>CREMA-D</strong></td><td>7,441 valid / 7,442</td><td>91</td><td>61 Train (4,983) / 15 Val (1,230) / 15 Test (1,228)</td><td>1 silent excluded (<code>1076_MTI_SAD_XX.wav</code>), 3 exact + 4 near dups, 0 actor overlap</td></tr>
+      <tr><td><strong>RAVDESS</strong></td><td>1,440 valid</td><td>24</td><td>Zero-shot cross-corpus (1,056 T6, 672 T4)</td><td>48 kHz &rarr; 16 kHz polyphase resampled; calm/surprised excluded</td></tr>
+      <tr><td><strong>CREMA-Dialog</strong></td><td>380 dialogs</td><td>91</td><td>240 Train / 60 Val / 80 Test (28 escalating)</td><td>Partition-locked Customer/Agent multi-turn calls</td></tr>
+      <tr><td><strong>Stream Benchmark</strong></td><td>285 streams</td><td>91</td><td>180 Train / 45 Val / 60 Test (10.24s each)</td><td>Frame masks + interval boxes for Seg/Det benchmarking</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="slide">
+  <h2>2. Java Mathematical Foundations &amp; Learning Paradigms (<code>ser-math</code>)</h2>
+  <div class="two-col">
+    <ul>
+      <li>N-D <code>Tensor</code> (broadcasting, matmul, <code>conv2d</code>, <code>conv3d</code>, receptive fields) &amp; one-sided Jacobi <code>Svd</code>.</li>
+      <li><strong>Gradient Check:</strong> Central differences (&epsilon;=10<sup>-5</sup>) passed 91 params (<code>maxRelErr = 2.753e-8</code>).</li>
+      <li><strong>Oja vs SVD:</strong> Cosine alignment <code>0.99990</code> (vs Hebbian explosion <code>1.999e8</code>).</li>
+      <li><strong>Energy Models:</strong> RBM CD-1 MSE <code>0.254 &rarr; 0.084</code>; Hopfield <code>100%</code> recall.</li>
+      <li><strong>Java Scratch MLP on CREMA-D:</strong> <code>50.71%</code> UAR (<code>50.49%</code> Acc, <code>17,158</code> params).</li>
+    </ul>
+    <img src="../results/math_sandbox/optimizer_convergence.svg" alt="Optimizers"/>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>3. Acoustic Features &amp; Deep CNN Benchmarks (E1 &amp; E2)</h2>
+  <div class="two-col">
+    <div>
+      <table>
+        <thead><tr><th>Model (CREMA-D Test, N=1,228)</th><th>UAR</th><th>Macro-F1</th></tr></thead>
+        <tbody>
+          <tr><td>MLP-Baseline (PyTorch, 64 functionals)</td><td>48.17%</td><td>47.49%</td></tr>
+          <tr><td>CNN-Basic (2 seeds)</td><td>47.86% &plusmn; 0.78%</td><td>45.86%</td></tr>
+          <tr><td>Conv3D-SER (3D over LogMel+&Delta;T+&Delta;F)</td><td>47.16%</td><td>44.75%</td></tr>
+          <tr><td>GoogLeNet-SER (Inception)</td><td>51.55%</td><td>50.58%</td></tr>
+          <tr><td>ResNet-SER</td><td>54.75%</td><td>54.00%</td></tr>
+          <tr><td>CNN-Deep (VGG blocks)</td><td>54.88%</td><td>53.69%</td></tr>
+          <tr><td><strong>ResNet-SER + CVAE Aug (E14)</strong></td><td><strong>56.29%</strong></td><td><strong>55.14%</strong></td></tr>
+          <tr><td><strong>ResNet-SER + SpecAug (T4 4-Class)</strong></td><td><strong>69.67%</strong></td><td><strong>68.92%</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <img src="../results/figures/e1_e2_model_benchmark.svg" alt="Model Benchmark"/>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>4. Item 8 Benchmark: Segmentation vs Detection</h2>
+  <div class="two-col">
+    <table>
+      <thead><tr><th>Model</th><th>mAP@0.5</th><th>Event F1</th><th>IoU</th><th>Latency</th></tr></thead>
+      <tbody>
+        <tr><td>SpecUNet-1D (Seg: 74.89% Acc, 0.568 mIoU)</td><td>0.1732</td><td>0.3036</td><td>0.754</td><td>4.37 ms</td></tr>
+        <tr><td>R-CNN-1D (Two-Stage Crops)</td><td>0.2628</td><td>0.4236</td><td>0.785</td><td>2.77 ms</td></tr>
+        <tr><td>Fast-RCNN-1D (Shared + RoI-Align)</td><td>0.2531</td><td>0.4346</td><td>0.755</td><td>3.24 ms</td></tr>
+        <tr><td>Faster-RCNN-1D (RPN + RoI-Align)</td><td>0.2898</td><td>0.4780</td><td><strong>0.792</strong></td><td>5.09 ms</td></tr>
+        <tr><td>YOLO-1D (Single-Shot 16-Cell Grid)</td><td>0.3151</td><td>0.4766</td><td>0.765</td><td><strong>2.83 ms</strong></td></tr>
+        <tr><td><strong>RetinaNet-1D (FPN + Focal Loss)</strong></td><td><strong>0.4294</strong></td><td><strong>0.5336</strong></td><td>0.749</td><td>4.43 ms</td></tr>
+      </tbody>
+    </table>
+    <img src="../results/figures/e8_segdet_benchmark.svg" alt="SegDet Benchmark"/>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>5. Stage C: Conversational Context &amp; Hypothesis H2</h2>
+  <div class="two-col">
+    <div>
+      <ul>
+        <li><strong>No-Context ResNet:</strong> <code>51.62%</code> UAR (Low-Agr: <code>47.92%</code>).</li>
+        <li><strong>HMM-Forward Control:</strong> <strong><code>66.45%</code> UAR</strong> (Low-Agr: <strong><code>62.86%</code> (+14.94 pp)</strong>, SeqAcc <code>74.24%</code>, JSD <code>0.0816</code>).</li>
+        <li><strong>BiLSTM:</strong> <code>37.48% &plusmn; 0.40%</code>; <strong>Causal Transformer:</strong> <code>27.20%</code>.</li>
+        <li><strong>Key Finding:</strong> Context strongly resolves ambiguity via Markov transition priors, while unanchored neural sequence heads overfit small 240-dialog corpora.</li>
+      </ul>
+    </div>
+    <img src="../results/figures/e6_e7_context_and_agreement.svg" alt="Context Benchmark"/>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>6. Generative Augmentation, Latent Space &amp; Calibration</h2>
+  <div class="two-col">
+    <img src="../results/figures/latent_space_and_activations.svg" alt="Latent Space"/>
+    <img src="../results/figures/confusion_matrix_and_calibration.svg" alt="Confusion and Calibration"/>
+  </div>
+  <p style="font-size:15px;color:#cbd5e1;margin-top:10px">Temperature scaling (T*=1.256) cuts ResNet+SpecAug ECE from <code>0.1378</code> to <code>0.0708</code>; CVAE augmentation achieves <code>56.29%</code> UAR and <code>0.0298</code> ECE.</p>
+</section>
+
+<section class="slide">
+  <h2>7. Escalation Detection (E11) &amp; Acoustic Robustness (E13)</h2>
+  <div class="two-col">
+    <ul>
+      <li><strong>D6 TransformerHead:</strong> Highest ranking (<strong>AUROC <code>0.8030</code>, AUPRC <code>0.4004</code></strong>, delay <code>+1.0</code> turn).</li>
+      <li><strong>D4 CUSUM (Audio-Only):</strong> Highest Event F1 (<strong><code>0.5538</code></strong>, FA/track <code>0.365</code>).</li>
+      <li><strong>Telephony &amp; Noise Limits:</strong> 20 dB SNR stays at <code>52.58%</code>, but 8 kHz telephony drops to <code>35.85%</code> and 10 dB drops to <code>29.29%</code>.</li>
+    </ul>
+    <img src="../results/figures/escalation_and_robustness.svg" alt="Escalation and Robustness"/>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>8. Java / ONNX Production Parity, Fairness &amp; Failure Analysis</h2>
+  <ul>
+    <li><strong>Exact Parity Verified:</strong> Java <code>AudioFeatures</code> Log-Mel parity <code>&lt; 5e-3</code>; Java ORT vs PyTorch parity <code>&lt; 1e-4</code> (<code>2.78e-6</code> ResNet, <code>1.19e-6</code> Transformer).</li>
+    <li><strong>Real-Time CPU Speed:</strong> End-to-end Java call analytics runs in <code>239–715 ms</code> on <code>28–38 s</code> calls (<code>RTF = 0.0085–0.0242</code>).</li>
+    <li><strong>Subgroup Spread (E9):</strong> Female <code>56.79%</code> vs Male <code>52.21%</code>; Age 50+ <code>61.38%</code> vs 35–49 <code>47.07%</code>; Race spread <code>3.51 pp</code>.</li>
+    <li><strong>Demo Failure Case:</strong> On <code>sample_routine_neutral.wav</code>, <code>ResNet-SER</code> got <code>5/5</code> customer turns right (<code>NEU, HAP, NEU, NEU, NEU</code>) and <code>D6</code> stayed quiet (<code>0.276</code>), whereas collapsed 6-class <code>ContextTransformer</code> logits caused a false HMM escalation alert.</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <h2>9. Evidence-Based Go / No-Go Recommendation</h2>
+  <table>
+    <thead><tr><th>Deployment Scope</th><th>Decision</th><th>Evidence Basis</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Post-Call Customer Quality Triage</strong></td><td><span class="tag go">CONDITIONAL GO</span></td><td>RTF &le; 0.024, ECE = 0.0298, D6 AUROC = 0.803, HMM-Forward UAR = 66.45% (wire escalation filters to calibrated ResNet-SER posteriors &amp; add 8 kHz augmentation).</td></tr>
+      <tr><td><strong>Unsupervised Live Routing / Actions</strong></td><td><span class="tag nogo">NO-GO</span></td><td>0.365–0.442 false-alarm rate per call &amp; sensitivity to &lt;10 dB noise / 8 kHz telephony.</td></tr>
+      <tr><td><strong>Employee / Agent Scoring</strong></td><td><span class="tag nogo">PROHIBITED (NO-GO)</span></td><td>Prohibited in workplaces by EU AI Act Article 5(1)(f); blocked by default in Java product.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+let idx = 0;
+function show(i) {
+  idx = (i + slides.length) % slides.length;
+  slides.forEach((s, k) => s.classList.toggle('active', k === idx));
+  document.getElementById('counter').textContent = (idx + 1) + ' / ' + slides.length;
+}
+function go(d) { show(idx + d); }
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') go(1);
+  if (e.key === 'ArrowLeft') go(-1);
+});
+</script>
+</body>
+</html>

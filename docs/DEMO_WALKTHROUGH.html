@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Demo Walkthrough — SER &amp; Conversation Analytics Tool</title>
+  <style>
+    body { font-family: system-ui, Segoe UI, sans-serif; background: #0b1120; color: #f8fafc; margin: 28px auto; max-width: 1200px; padding: 0 20px; }
+    h1, h2 { color: #38bdf8; }
+    .card { background: #111827; border: 1px solid #334155; border-radius: 10px; padding: 18px; margin-bottom: 18px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)); gap: 16px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { border-bottom: 1px solid #334155; padding: 8px 10px; text-align: left; }
+    th { color: #94a3b8; }
+    img { width: 100%; border-radius: 8px; border: 1px solid #334155; background: #0f172a; }
+    audio { width: 100%; margin-top: 8px; }
+    code { background: #1e293b; padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+<h1>Interactive End-to-End Demo Walkthrough</h1>
+<p>All metrics and audio artifacts below are produced directly by <code>java -jar ser-app/target/ser-app.jar --demo</code> and <code>python -m ser_research.run_all_experiments</code>.</p>
+
+<div class="card">
+  <h2>1. Live Java ONNX Demo Runs on Held-Out Stereo Conversations</h2>
+  <table>
+    <thead><tr><th>Call Recording</th><th>Duration</th><th>VAD Turns</th><th>Java Latency</th><th>RTF</th><th>ResNet-SER vs Context Findings</th></tr></thead>
+    <tbody>
+      <tr><td><code>sample_escalating_gradual.wav</code></td><td>29.6 s</td><td>13</td><td>715.00 ms</td><td>0.02419</td><td>D6 TransformerHead peaks at <strong>0.5320</strong> at Turn 8; customer intensity alerts triggered.</td></tr>
+      <tr><td><code>sample_resolved.wav</code></td><td>38.1 s</td><td>16</td><td>416.36 ms</td><td>0.01093</td><td>Acoustic ResNet captures initial DIS/ANG/SAD and late NEU recovery; agent channel redacted per EU AI Act.</td></tr>
+      <tr><td><code>sample_routine_neutral.wav</code></td><td>28.1 s</td><td>10</td><td>239.29 ms</td><td>0.00853</td><td>ResNet-SER predicts 5/5 customer turns right (NEU/HAP/NEU/NEU/NEU); D6 stays &le; 0.2755; illustrates why HMM should consume ResNet rather than collapsed 6-class context logits.</td></tr>
+    </tbody>
+  </table>
+  <div class="grid" style="margin-top:12px">
+    <div><strong>Escalating Call Audio:</strong><audio controls src="../data/conversations/sample_escalating_gradual.wav"></audio></div>
+    <div><strong>Resolved Call Audio:</strong><audio controls src="../data/conversations/sample_resolved.wav"></audio></div>
+    <div><strong>Routine Neutral Audio:</strong><audio controls src="../data/conversations/sample_routine_neutral.wav"></audio></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>2. Research Benchmark Visualizations</h2>
+  <div class="grid">
+    <div><h4>E1 &amp; E2 Architecture Benchmarks</h4><img src="../results/figures/e1_e2_model_benchmark.svg"/></div>
+    <div><h4>Stage C Context &amp; Agreement Gain</h4><img src="../results/figures/e6_e7_context_and_agreement.svg"/></div>
+    <div><h4>Item 8 Segmentation &amp; Detection</h4><img src="../results/figures/e8_segdet_benchmark.svg"/></div>
+    <div><h4>Grad-CAM &amp; Feature Maps</h4><img src="../results/figures/conv_activations_gradcam.svg"/></div>
+    <div><h4>Latent Space &amp; Step/Sigmoid/Tanh</h4><img src="../results/figures/latent_space_and_activations.svg"/></div>
+    <div><h4>Confusion Matrix &amp; Calibration</h4><img src="../results/figures/confusion_matrix_and_calibration.svg"/></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>3. Java Mathematical Sandbox &amp; Learning Paradigms (<code>ser-math</code>)</h2>
+  <p>Verified gradient check error: <code>2.753e-8</code> | Oja vs SVD cosine: <code>0.99990</code> | Real CREMA-D Java MLP UAR: <code>50.71%</code></p>
+  <div class="grid">
+    <div><h4>Optimizer Convergence</h4><img src="../results/math_sandbox/optimizer_convergence.svg"/></div>
+    <div><h4>SVD Spectrogram Reconstruction</h4><img src="../results/math_sandbox/svd_reconstruction.svg"/></div>
+    <div><h4>2D Conv Formant Edges</h4><img src="../results/math_sandbox/conv2d_freq_edges.svg"/></div>
+    <div><h4>3D Conv (Mel x &Delta;T x &Delta;F)</h4><img src="../results/math_sandbox/conv3d_temporal_spectral.svg"/></div>
+  </div>
+</div>
+</body>
+</html>
