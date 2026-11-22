@@ -133,6 +133,39 @@ class AppIntegrationTest {
                 assertTrue(research.containsKey("experimentResults"));
                 assertTrue(research.containsKey("datasetStats"));
                 assertNotNull(DashboardServer.class.getResourceAsStream("/static/index.html"));
+
+                if (Files.isDirectory(root.resolve("data").resolve("raw").resolve("crema_d").resolve("AudioWAV"))) {
+                    assertEquals(8881, ((Number) overview.get("datasetVoicesIndexed")).intValue());
+                    var page = server.buildDatasetVoicesPage("ALL", "ALL", "ALL", "", 0, 25);
+                    assertEquals(8881, ((Number) page.get("totalIndexed")).intValue());
+                    assertEquals(7441, ((Number) page.get("cremaCount")).intValue());
+                    assertEquals(1440, ((Number) page.get("ravdessCount")).intValue());
+
+                    var cremaPage = server.buildDatasetVoicesPage("CREMA-D", "ALL", "ALL", "", 0, 5);
+                    @SuppressWarnings("unchecked")
+                    var cremaItems = (List<java.util.Map<String, Object>>) cremaPage.get("items");
+                    String cremaId = (String) cremaItems.get(0).get("clipId");
+                    var cremaRep = server.analyzeDatasetVoice(cremaId);
+                    assertEquals("CREMA-D", cremaRep.dataset());
+                    assertTrue(cremaRep.datasetFullName().contains("Crowd-Sourced"));
+                    assertEquals(6, cremaRep.probabilities().size());
+                    double cSum = cremaRep.probabilities().values().stream().mapToDouble(Double::doubleValue).sum();
+                    assertEquals(1.0, cSum, 1e-2);
+                    assertTrue(cremaRep.processingTimeMs() > 0.0);
+                    assertNotNull(cremaRep.modelUsed());
+
+                    var ravPage = server.buildDatasetVoicesPage("RAVDESS", "ALL", "ALL", "", 0, 5);
+                    @SuppressWarnings("unchecked")
+                    var ravItems = (List<java.util.Map<String, Object>>) ravPage.get("items");
+                    String ravId = (String) ravItems.get(0).get("clipId");
+                    var ravRep = server.analyzeDatasetVoice(ravId);
+                    assertEquals("RAVDESS", ravRep.dataset());
+                    assertTrue(ravRep.datasetFullName().contains("Ryerson"));
+                    assertEquals(48000, ravRep.sampleRateHz());
+                    assertEquals(6, ravRep.probabilities().size());
+                    double rSum = ravRep.probabilities().values().stream().mapToDouble(Double::doubleValue).sum();
+                    assertEquals(1.0, rSum, 1e-2);
+                }
             }
         }
     }

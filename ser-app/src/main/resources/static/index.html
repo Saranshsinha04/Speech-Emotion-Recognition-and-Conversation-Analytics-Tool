@@ -359,7 +359,7 @@
       color: var(--text);
     }
 
-    select, input[type="file"] {
+    select, input[type="file"], input[type="search"], input[type="text"] {
       background: var(--surface);
       color: var(--text);
       border: 1px solid var(--border-strong);
@@ -367,6 +367,54 @@
       border-radius: 8px;
       font-size: 0.875rem;
       max-width: 100%;
+    }
+
+    .mode-tabs {
+      display: inline-flex;
+      gap: 6px;
+      background: var(--surface-subtle);
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      max-width: 100%;
+    }
+
+    .mode-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.86rem;
+      padding: 8px 14px;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+
+    .mode-btn.active {
+      background: var(--surface);
+      color: var(--accent);
+      box-shadow: var(--shadow);
+    }
+
+    .model-list {
+      margin: 10px 0 0 0;
+      padding-left: 18px;
+      font-size: 0.88rem;
+    }
+
+    .model-list li {
+      margin-bottom: 10px;
+    }
+
+    .pager {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
     }
 
     .btn {
@@ -630,8 +678,8 @@
   <!-- TAB 1: OVERVIEW -->
   <section id="tab-overview" class="tab active">
     <div class="section-header">
-      <h2>Conversation Overview</h2>
-      <p class="section-desc">Summary of analyzed customer support calls, detected frustration escalations, and processing speed.</p>
+      <h2>Conversation &amp; Dataset Overview</h2>
+      <p class="section-desc">Summary of analyzed support calls and all 8,881 speech clips from CREMA-D (Crowd-Sourced Emotional Multimodal Actors Dataset) and RAVDESS (Ryerson Audio-Visual Database of Emotional Speech and Song).</p>
     </div>
 
     <div class="kpis" id="overview-kpis"></div>
@@ -662,70 +710,160 @@
         </div>
       </div>
     </div>
+
+    <div class="grid2">
+      <div class="card" id="overview-datasets-card"></div>
+      <div class="card" id="overview-models-card">
+        <h3>Models Used to Analyze Voices</h3>
+        <p class="chart-subtitle">Live audio classification and conversation analytics run in Java using two exported neural networks and statistical sequence filters:</p>
+        <ul class="model-list">
+          <li><strong>Single-Voice Acoustic Model (Two-Dimensional Residual Convolutional Neural Network):</strong> Analyzes each individual spoken clip or turn using calibrated Logarithmic Mel Spectrograms (64 frequency bands across 16 kHz sound) to estimate six vocal emotions and build a 128-number voice summary.</li>
+          <li><strong>Conversation Context Model (Two-Layer Causal Attention Transformer):</strong> Reads consecutive speaker turns and voice summaries across a dialogue to track emotional momentum and score call escalation likelihood.</li>
+          <li><strong>Escalation &amp; Speech Analytics Layer (Two-State Hidden Markov Model &amp; Cumulative Sum Tracker):</strong> Smooths turn-to-turn uncertainty, detects sustained distress buildup above the 55% alert threshold, and measures vocal pitch (Hz) and raised-voice intensity.</li>
+        </ul>
+      </div>
+    </div>
   </section>
 
   <!-- TAB 2: CONVERSATION ANALYSIS -->
   <section id="tab-analysis" class="tab">
     <div class="section-header">
-      <h2>Conversation Analysis</h2>
-      <p class="section-desc">Listen to a call recording, inspect how customer vocal emotion changed over time, or upload a new 16-bit Waveform Audio recording.</p>
+      <h2>Conversation &amp; Voice Analysis</h2>
+      <p class="section-desc">Inspect multi-turn conversations, upload your own 16-bit Waveform Audio recording, or analyze any voice clip from the full CREMA-D and RAVDESS datasets.</p>
     </div>
 
-    <div class="card">
-      <div class="toolbar">
-        <div class="control-group">
-          <label for="conv-select">Select a Call:</label>
-          <select id="conv-select" onchange="loadConversation(this.value)"></select>
-        </div>
-        <div class="control-group">
-          <label for="wav-upload">Upload Audio (16-bit Waveform Audio, .wav):</label>
-          <input type="file" id="wav-upload" accept=".wav"/>
-          <button class="btn" id="upload-btn" onclick="uploadWav()">Analyze Recording</button>
-        </div>
-        <label style="font-size:0.85rem;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer">
-          <input type="checkbox" id="research-mode-chk"/> Include support agent emotions (research use only)
-        </label>
-      </div>
+    <div class="mode-tabs" role="tablist" aria-label="Analysis mode">
+      <button type="button" class="mode-btn active" id="mode-btn-calls" onclick="setAnalysisMode('calls')">Multi-Turn Calls &amp; Audio Upload</button>
+      <button type="button" class="mode-btn" id="mode-btn-dataset" onclick="setAnalysisMode('dataset')">All Dataset Voices (CREMA-D &amp; RAVDESS)</button>
     </div>
 
-    <div class="card" id="conv-header-card">
-      <div id="conv-summary"></div>
-      <div class="audio-row">
-        <audio id="conv-audio" controls preload="metadata"></audio>
-        <div id="conv-risks" style="display:flex;flex-wrap:wrap;gap:8px"></div>
-      </div>
-    </div>
-
-    <div class="grid2">
+    <div id="analysis-calls-view">
       <div class="card">
-        <div id="esc-chart-box"></div>
+        <div class="toolbar">
+          <div class="control-group">
+            <label for="conv-select">Select a Call:</label>
+            <select id="conv-select" onchange="loadConversation(this.value)"></select>
+          </div>
+          <div class="control-group">
+            <label for="wav-upload">Upload Audio (16-bit Waveform Audio, .wav):</label>
+            <input type="file" id="wav-upload" accept=".wav"/>
+            <button class="btn" id="upload-btn" onclick="uploadWav()">Analyze Recording</button>
+          </div>
+          <label style="font-size:0.85rem;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer">
+            <input type="checkbox" id="research-mode-chk"/> Include support agent emotions (research use only)
+          </label>
+        </div>
       </div>
+
+      <div class="card" id="conv-header-card">
+        <div id="conv-summary"></div>
+        <div class="audio-row">
+          <audio id="conv-audio" controls preload="metadata"></audio>
+          <div id="conv-risks" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div id="esc-chart-box"></div>
+        </div>
+        <div class="card">
+          <div id="trans-matrix-box"></div>
+        </div>
+      </div>
+
       <div class="card">
-        <div id="trans-matrix-box"></div>
+        <h3>Speaking Turn Timeline</h3>
+        <p class="chart-subtitle" style="margin-bottom:12px">Turn-by-turn breakdown comparing single-turn voice predictions with conversation-aware context estimates.</p>
+        <div class="table-wrap">
+          <table id="utt-table">
+            <thead>
+              <tr>
+                <th>Turn</th>
+                <th>Time Window</th>
+                <th>Speaker</th>
+                <th>Single-Turn Voice Estimate</th>
+                <th>Conversation-Aware Estimate</th>
+                <th class="num">Confidence</th>
+                <th class="num">Escalation Likelihood</th>
+                <th class="num">Drift Score</th>
+                <th class="num">Average Pitch (Hz)</th>
+                <th>Voice Characteristics</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <h3>Speaking Turn Timeline</h3>
-      <p class="chart-subtitle" style="margin-bottom:12px">Turn-by-turn breakdown comparing single-turn voice predictions with conversation-aware context estimates.</p>
-      <div class="table-wrap">
-        <table id="utt-table">
-          <thead>
-            <tr>
-              <th>Turn</th>
-              <th>Time Window</th>
-              <th>Speaker</th>
-              <th>Single-Turn Voice Estimate</th>
-              <th>Conversation-Aware Estimate</th>
-              <th class="num">Confidence</th>
-              <th class="num">Escalation Likelihood</th>
-              <th class="num">Drift Score</th>
-              <th class="num">Average Pitch (Hz)</th>
-              <th>Voice Characteristics</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+    <div id="analysis-dataset-view" style="display:none">
+      <div class="card">
+        <div class="toolbar">
+          <div class="control-group">
+            <label for="ds-filter-dataset">Dataset:</label>
+            <select id="ds-filter-dataset" onchange="onDatasetFilterChange(true)">
+              <option value="ALL">All Datasets (CREMA-D &amp; RAVDESS)</option>
+              <option value="CREMA-D">CREMA-D (Crowd-Sourced Actors Dataset)</option>
+              <option value="RAVDESS">RAVDESS (Ryerson Speech Database)</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label for="ds-filter-emotion">Dataset Emotion:</label>
+            <select id="ds-filter-emotion" onchange="loadDatasetVoices(0)">
+              <option value="ALL">All Emotions</option>
+              <option value="NEU">Neutral</option>
+              <option value="HAP">Happy</option>
+              <option value="SAD">Sad</option>
+              <option value="ANG">Angry</option>
+              <option value="FEA">Fearful</option>
+              <option value="DIS">Disgust</option>
+              <option value="CAL">Calm (RAVDESS only)</option>
+              <option value="SUR">Surprised (RAVDESS only)</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label for="ds-filter-speaker">Speaker:</label>
+            <select id="ds-filter-speaker" onchange="loadDatasetVoices(0)">
+              <option value="ALL">All Speakers</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label for="ds-filter-query">Search:</label>
+            <input type="search" id="ds-filter-query" placeholder="Sentence, speaker, or file..." onkeydown="if(event.key==='Enter')loadDatasetVoices(0)"/>
+            <button type="button" class="btn-subtle" onclick="loadDatasetVoices(0)">Filter</button>
+          </div>
+          <button type="button" class="btn" id="ds-random-btn" onclick="analyzeRandomVoice()">Analyze Random Matching Voice</button>
+        </div>
+      </div>
+
+      <div class="card" id="ds-result-card">
+        <p class="chart-subtitle">Select any voice clip below or click Analyze Random Matching Voice to run live neural-network voice analysis.</p>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+          <div>
+            <h3 style="margin-bottom:2px">Dataset Voice Library</h3>
+            <p class="chart-subtitle" id="ds-count-subtitle">Loading voice index...</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table id="ds-table">
+            <thead>
+              <tr>
+                <th>Dataset</th>
+                <th>Voice Recording</th>
+                <th>Speaker</th>
+                <th>Spoken Sentence</th>
+                <th>Dataset Label</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="pager" id="ds-pager"></div>
       </div>
     </div>
   </section>
@@ -752,6 +890,8 @@ const EMOTION_FULL = {
   ANG: 'Angry',
   FEA: 'Fearful',
   DIS: 'Disgust',
+  CAL: 'Calm',
+  SUR: 'Surprised',
   REDACTED_POLICY: 'Hidden (Privacy Mode)'
 };
 
@@ -761,7 +901,9 @@ const EMOTION_COLORS = {
   SAD: '#2563eb',
   ANG: '#b91c1c',
   FEA: '#7c3aed',
-  DIS: '#b45309'
+  DIS: '#b45309',
+  CAL: '#0284c7',
+  SUR: '#0d9488'
 };
 
 const SPEAKER_FULL = {
@@ -1160,6 +1302,214 @@ function renderOverview(ov, convs) {
       <td><button class="btn-subtle" onclick="inspectConv('${c.conversationId}')">View Details</button></td>
     </tr>
   `).join('');
+
+  const totalVoices = ov.datasetVoicesIndexed || 0;
+  const cremaVoices = ov.cremaVoicesCount || 0;
+  const ravVoices = ov.ravdessVoicesCount || 0;
+  document.getElementById('overview-datasets-card').innerHTML = `
+    <h3>Voice Datasets Available</h3>
+    <p class="chart-subtitle">All valid speech clips from both benchmark datasets can be browsed, played, and analyzed individually using the live acoustic model.</p>
+    <ul class="model-list">
+      <li><strong>CREMA-D (Crowd-Sourced Emotional Multimodal Actors Dataset):</strong> <strong>${cremaVoices.toLocaleString()}</strong> valid voice clips across 91 diverse speakers (16 kHz audio; Neutral, Happy, Sad, Angry, Fearful, Disgust).</li>
+      <li><strong>RAVDESS (Ryerson Audio-Visual Database of Emotional Speech and Song):</strong> <strong>${ravVoices.toLocaleString()}</strong> studio speech recordings across 24 actors (48 kHz resampled to 16 kHz; adds Calm and Surprised).</li>
+    </ul>
+    <div style="margin-top:14px">
+      <button type="button" class="btn" onclick="openDatasetExplorer()">Browse &amp; Analyze All ${totalVoices.toLocaleString()} Voices</button>
+    </div>
+  `;
+}
+
+let datasetInitialized = false;
+let datasetState = { page: 0, pageSize: 25 };
+
+function openDatasetExplorer() {
+  showTab('analysis', document.querySelectorAll('nav button')[1]);
+  setAnalysisMode('dataset');
+}
+
+function setAnalysisMode(mode) {
+  const isCalls = mode === 'calls';
+  document.getElementById('analysis-calls-view').style.display = isCalls ? 'block' : 'none';
+  document.getElementById('analysis-dataset-view').style.display = isCalls ? 'none' : 'block';
+  document.getElementById('mode-btn-calls').classList.toggle('active', isCalls);
+  document.getElementById('mode-btn-dataset').classList.toggle('active', !isCalls);
+  if (!isCalls && !datasetInitialized) {
+    datasetInitialized = true;
+    loadDatasetVoices(0, true);
+  }
+}
+
+async function onDatasetFilterChange(resetSpeaker = false) {
+  if (resetSpeaker) {
+    document.getElementById('ds-filter-speaker').value = 'ALL';
+  }
+  await loadDatasetVoices(0);
+}
+
+async function loadDatasetVoices(page = 0, analyzeFirstIfEmpty = false) {
+  const dataset = document.getElementById('ds-filter-dataset').value;
+  const emotion = document.getElementById('ds-filter-emotion').value;
+  const speakerSel = document.getElementById('ds-filter-speaker');
+  const speaker = speakerSel.value || 'ALL';
+  const q = document.getElementById('ds-filter-query').value.trim();
+
+  const params = new URLSearchParams({
+    dataset,
+    emotion,
+    speaker,
+    q,
+    page: String(page),
+    pageSize: String(datasetState.pageSize)
+  });
+
+  const data = await fetch('/api/dataset/voices?' + params.toString()).then(r => r.json());
+  datasetState.page = data.page || 0;
+
+  const prevSpeaker = speaker;
+  const spkOptions = ['<option value="ALL">All Speakers</option>', ...(data.speakers || []).map(s => `<option value="${s}">${s}</option>`)];
+  speakerSel.innerHTML = spkOptions.join('');
+  if ([...(data.speakers || [])].includes(prevSpeaker)) {
+    speakerSel.value = prevSpeaker;
+  } else {
+    speakerSel.value = 'ALL';
+  }
+
+  const startIdx = data.filteredCount === 0 ? 0 : data.page * data.pageSize + 1;
+  const endIdx = Math.min(data.filteredCount, (data.page + 1) * data.pageSize);
+  document.getElementById('ds-count-subtitle').textContent =
+    `Showing ${startIdx}–${endIdx} of ${data.filteredCount.toLocaleString()} matching clips (${data.cremaCount.toLocaleString()} CREMA-D + ${data.ravdessCount.toLocaleString()} RAVDESS = ${data.totalIndexed.toLocaleString()} total voices).`;
+
+  const tbody = document.querySelector('#ds-table tbody');
+  if (!data.items || !data.items.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="color:var(--muted)">No voice clips matched your filter criteria.</td></tr>';
+  } else {
+    tbody.innerHTML = data.items.map(item => `
+      <tr>
+        <td><strong>${item.dataset}</strong></td>
+        <td><strong>${item.fileName}</strong></td>
+        <td>${item.speakerId}<br><span style="font-size:0.78rem;color:var(--muted)">${item.speakerInfo}</span></td>
+        <td>&ldquo;${item.sentenceText}&rdquo;<br><span style="font-size:0.78rem;color:var(--muted)">Intensity: ${item.intensityLevel}</span></td>
+        <td><span class="pill pill-neu">${fullEmotion(item.groundTruthEmotion)}</span></td>
+        <td><button type="button" class="btn-subtle" onclick="analyzeDatasetClip('${item.clipId}')">Analyze Voice</button></td>
+      </tr>
+    `).join('');
+  }
+
+  document.getElementById('ds-pager').innerHTML = `
+    <span style="font-size:0.84rem;color:var(--muted)">Page ${data.page + 1} of ${data.totalPages}</span>
+    <div style="display:flex;gap:8px">
+      <button type="button" class="btn-subtle" ${data.page <= 0 ? 'disabled style="opacity:0.5;cursor:not-allowed"' : ''} onclick="loadDatasetVoices(${data.page - 1})">Previous</button>
+      <button type="button" class="btn-subtle" ${data.page + 1 >= data.totalPages ? 'disabled style="opacity:0.5;cursor:not-allowed"' : ''} onclick="loadDatasetVoices(${data.page + 1})">Next</button>
+    </div>
+  `;
+
+  if (analyzeFirstIfEmpty && data.items && data.items.length > 0) {
+    await analyzeDatasetClip(data.items[0].clipId, false);
+  }
+}
+
+async function analyzeDatasetClip(clipId, scrollIntoView = true) {
+  const card = document.getElementById('ds-result-card');
+  const rep = await fetch('/api/dataset/analyze?id=' + encodeURIComponent(clipId)).then(r => r.json());
+  renderDatasetClipReport(rep);
+  if (scrollIntoView) {
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+async function analyzeRandomVoice() {
+  const btn = document.getElementById('ds-random-btn');
+  btn.disabled = true;
+  btn.textContent = 'Analyzing...';
+  try {
+    const params = new URLSearchParams({
+      random: 'true',
+      dataset: document.getElementById('ds-filter-dataset').value,
+      emotion: document.getElementById('ds-filter-emotion').value,
+      speaker: document.getElementById('ds-filter-speaker').value,
+      q: document.getElementById('ds-filter-query').value.trim()
+    });
+    const rep = await fetch('/api/dataset/analyze?' + params.toString()).then(r => r.json());
+    renderDatasetClipReport(rep);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Analyze Random Matching Voice';
+  }
+}
+
+function renderDatasetClipReport(rep) {
+  const card = document.getElementById('ds-result-card');
+  if (rep.error) {
+    card.innerHTML = `<p style="color:var(--danger);margin:0">Unable to analyze voice clip: ${rep.error}</p>`;
+    return;
+  }
+
+  let matchBadge = '';
+  if (!rep.inModelVocabulary) {
+    matchBadge = '<span class="pill pill-warn">Outside 6-Class Model Vocabulary (RAVDESS Calm/Surprised mapped to nearest trained voice tone)</span>';
+  } else if (rep.matchesGroundTruth) {
+    matchBadge = '<span class="pill pill-ok">Matches Dataset Emotion Label</span>';
+  } else {
+    matchBadge = '<span class="pill pill-neu">Predicted Different Emotion from Dataset Label</span>';
+  }
+
+  const probRows = Object.entries(rep.probabilities || {}).map(([code, v]) => `
+    <div class="bar-row">
+      <span class="bar-name">${fullEmotion(code)}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${(v * 100).toFixed(1)}%;background:${EMOTION_COLORS[code] || '#1d4ed8'}"></div></div>
+      <span class="bar-pct">${(v * 100).toFixed(1)}%</span>
+    </div>
+  `).join('');
+
+  const probChartHtml = chartCard({
+    headingTag: 'h4',
+    title: 'Single-Voice Emotion Confidence Breakdown',
+    subtitle: 'Calibrated confidence assigned by the Two-Dimensional Residual Convolutional Neural Network across all six trained emotions.',
+    bodyHtml: `<div>${probRows}</div>`,
+    tooltip: {
+      what: 'The likelihood the voice model assigns to each of its six recognized vocal emotions for this audio recording.',
+      axes: 'Vertical: Emotion category · Horizontal: Model probability score (0% to 100%).',
+      how: 'The longest bar marks the model’s primary prediction; secondary bars show closely competing vocal tones.',
+      why: 'Helps you see not only the top predicted emotion, but also how confident the model was and whether an alternative emotion scored closely.'
+    }
+  });
+
+  card.innerHTML = `
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;align-items:flex-start">
+      <div>
+        <h3 style="margin-bottom:4px">${rep.fileName} &mdash; ${rep.dataset}</h3>
+        <div style="font-size:0.84rem;color:var(--muted)">
+          ${rep.datasetFullName}
+        </div>
+        <div style="font-size:0.84rem;color:var(--muted);margin-top:4px">
+          Speaker: <strong>${rep.speakerId}</strong> (${rep.speakerInfo}) &middot; Sentence: &ldquo;${rep.sentenceText}&rdquo; (${rep.intensityLevel} intensity)
+        </div>
+        <div style="font-size:0.83rem;color:var(--muted);margin-top:4px">
+          Active Model: <strong>${rep.modelUsed}</strong> &middot; Length: ${rep.durationSec.toFixed(2)} s (${rep.sampleRateHz} Hz) &middot; Pitch: ${rep.f0MeanHz > 0 ? Math.round(rep.f0MeanHz) + ' Hz' : '—'} &middot; Speed: ${rep.processingTimeMs.toFixed(1)} ms (Ratio ${rep.realTimeFactor.toFixed(4)})
+        </div>
+      </div>
+      <div>${matchBadge}</div>
+    </div>
+
+    <div class="grid2" style="margin-top:16px;margin-bottom:0">
+      <div>
+        <div class="grid2" style="margin-bottom:14px">
+          <div class="kpi-card">
+            <div class="kpi-label">Model Prediction</div>
+            <div class="kpi-val" style="color:${EMOTION_COLORS[rep.predictedEmotion] || 'var(--accent)'}">${fullEmotion(rep.predictedEmotion)}</div>
+            <p class="kpi-sub">${(rep.confidence * 100).toFixed(1)}% calibrated confidence</p>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Dataset Ground-Truth Label</div>
+            <div class="kpi-val">${fullEmotion(rep.groundTruthEmotion)}</div>
+            <p class="kpi-sub">${rep.dataset} annotated expression</p>
+          </div>
+        </div>
+        <audio controls preload="metadata" src="${rep.audioUrl}"></audio>
+      </div>
+      <div>${probChartHtml}</div>
+    </div>
+  `;
 }
 
 function populateConvSelect(convs) {
@@ -1170,6 +1520,7 @@ function populateConvSelect(convs) {
 }
 
 function inspectConv(id) {
+  setAnalysisMode('calls');
   document.getElementById('conv-select').value = id;
   loadConversation(id);
   showTab('analysis', document.querySelectorAll('nav button')[1]);
@@ -1187,6 +1538,9 @@ async function loadConversation(id) {
         <h3 style="margin-bottom:2px">${humanizeCallName(rep.conversationId)}</h3>
         <div style="font-size:0.83rem;color:var(--muted)">
           Audio File: ${rep.audioFileName} &middot; Length: ${rep.totalDurationSec.toFixed(1)} s &middot; Analysis Time: ${rep.processingTimeMs.toFixed(1)} ms &middot; Speed Ratio: ${rep.realTimeFactor.toFixed(4)}
+        </div>
+        <div style="font-size:0.82rem;color:var(--muted);margin-top:3px">
+          Active Models: Two-Dimensional Residual Convolutional Neural Network (single turns) + Two-Layer Causal Attention Transformer, Hidden Markov Model, and Cumulative Drift Tracker (conversation timeline).
         </div>
       </div>
       <div>${statusPill}</div>

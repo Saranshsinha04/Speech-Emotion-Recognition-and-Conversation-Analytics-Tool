@@ -65,6 +65,32 @@ public final class ConversationAnalyticsEngine {
             double[][] attentionMatrix
     ) {}
 
+    public record VoiceClipReport(
+            String clipId,
+            String fileName,
+            String dataset,
+            String datasetFullName,
+            String speakerId,
+            String speakerInfo,
+            String sentenceText,
+            String intensityLevel,
+            String groundTruthEmotion,
+            boolean inModelVocabulary,
+            String predictedEmotion,
+            double confidence,
+            Boolean matchesGroundTruth,
+            Map<String, Double> probabilities,
+            double durationSec,
+            int sampleRateHz,
+            double f0MeanHz,
+            double preRmsDb,
+            double spectralCentroidKhz,
+            double processingTimeMs,
+            double realTimeFactor,
+            String modelUsed,
+            String audioUrl
+    ) {}
+
     private final OnnxSerService onnxService;
 
     public ConversationAnalyticsEngine(OnnxSerService onnxService) {
@@ -252,6 +278,75 @@ public final class ConversationAnalyticsEngine {
                 summary,
                 uttOut,
                 seqInf.attentionWeights()
+        );
+    }
+
+    /**
+     * Analyzes a single spoken voice clip from any dataset (e.g., CREMA-D or RAVDESS)
+     * directly using the calibrated ResNet-SER acoustic model.
+     */
+    public VoiceClipReport analyzeSingleUtterance(
+            Path wavPath,
+            String clipId,
+            String dataset,
+            String datasetFullName,
+            String speakerId,
+            String speakerInfo,
+            String sentenceText,
+            String intensityLevel,
+            String groundTruthEmotion,
+            String audioUrl
+    ) throws IOException, OrtException {
+        long tStart = System.nanoTime();
+        WavIO.WavData wav = WavIO.readWav(wavPath);
+        double[] y16 = WavIO.resampleTo16k(wav.channelSamples()[0], wav.sampleRate());
+        double peak = 0.0;
+        for (double s : y16) {
+            peak = Math.max(peak, Math.abs(s));
+        }
+        if (y16.length == 0 || peak <= 1e-5) {
+            throw new IOException("Silent or corrupted audio clip: " + wavPath.getFileName());
+        }
+
+        OnnxSerService.ModelMetadata meta = onnxService.metadata();
+        List<String> emotions = meta.emotions();
+        AudioFeatures.ExtractedFeatures feats = AudioFeatures.extract(y16, meta.logMelMean(), meta.logMelStd());
+        OnnxSerService.UtteranceInference inf = onnxService.inferUtterance(feats.logMelFlat());
+
+        Map<String, Double> probMap = new LinkedHashMap<>();
+        for (int c = 0; c < emotions.size(); c++) {
+            probMap.put(emotions.get(c), round4(inf.probabilities()[c]));
+        }
+
+        boolean inVocab = groundTruthEmotion != null && emotions.contains(groundTruthEmotion);
+        Boolean matches = inVocab ? inf.predictedEmotion().equals(groundTruthEmotion) : null;
+        double procMs = (System.nanoTime() - tStart) / 1e6;
+        double rtf = (procMs / 1000.0) / Math.max(0.1, wav.durationSec());
+
+        return new VoiceClipReport(
+                clipId,
+                wavPath.getFileName().toString(),
+                dataset,
+                datasetFullName,
+                speakerId,
+                speakerInfo,
+                sentenceText,
+                intensityLevel,
+                groundTruthEmotion,
+                inVocab,
+                inf.predictedEmotion(),
+                round4(inf.confidence()),
+                matches,
+                probMap,
+                round3(wav.durationSec()),
+                wav.sampleRate(),
+                round1(feats.f0MeanHz()),
+                round1(feats.preRmsDb()),
+                round3(feats.spectralCentroidKhz()),
+                round2(procMs),
+                round5(rtf),
+                "Two-Dimensional Residual Convolutional Neural Network (ResNet-SER, ONNX Runtime)",
+                audioUrl
         );
     }
 
