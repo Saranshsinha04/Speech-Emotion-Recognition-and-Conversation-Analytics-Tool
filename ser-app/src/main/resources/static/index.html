@@ -3,201 +3,1170 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Speech Emotion Recognition &amp; Conversation Analytics — Contact-Center Dashboard</title>
+  <title>Speech Emotion Recognition and Conversation Analytics</title>
   <style>
     :root {
-      --bg: #0b1120; --surface: #111827; --card: #1e293b; --border: #334155;
-      --text: #f8fafc; --muted: #94a3b8; --accent: #38bdf8; --ok: #22c55e;
-      --warn: #f59e0b; --danger: #ef4444;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-subtle: #f1f5f9;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text: #0f172a;
+      --text-body: #334155;
+      --muted: #64748b;
+      --accent: #1d4ed8;
+      --accent-hover: #1e40af;
+      --accent-soft: #eff6ff;
+      --ok: #0f766e;
+      --ok-bg: #f0fdfa;
+      --ok-border: #99f6e4;
+      --warn: #b45309;
+      --warn-bg: #fffbeb;
+      --warn-border: #fde68a;
+      --danger: #b91c1c;
+      --danger-bg: #fef2f2;
+      --danger-border: #fecaca;
+      --shadow: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
+      --shadow-pop: 0 12px 30px rgba(15, 23, 42, 0.14), 0 4px 10px rgba(15, 23, 42, 0.06);
+      --radius: 12px;
     }
+
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, sans-serif; background: var(--bg); color: var(--text); }
-    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-    header h1 { margin: 0; font-size: 18px; font-weight: 700; }
-    .badge { padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #1e3a8a; color: #bfdbfe; border: 1px solid #3b82f6; }
-    nav { display: flex; gap: 8px; padding: 10px 24px; background: var(--surface); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
-    nav button { background: transparent; color: var(--muted); border: 1px solid transparent; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; }
-    nav button.active { background: var(--card); color: var(--accent); border-color: var(--border); }
-    main { padding: 20px 24px; max-width: 1420px; margin: 0 auto; }
+
+    html, body {
+      max-width: 100%;
+      overflow-x: clip;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text-body);
+      line-height: 1.55;
+      font-variant-numeric: tabular-nums;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Single-line clean clinical header */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 18px 24px;
+    }
+
+    header h1 {
+      margin: 0;
+      color: var(--text);
+      font-size: clamp(1.05rem, 2.1vw, 1.32rem);
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Clean 4-tab navigation */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .nav-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-inner::-webkit-scrollbar { display: none; }
+
+    nav button {
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 13px 16px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    nav button:hover {
+      color: var(--text);
+      background: var(--surface-subtle);
+    }
+
+    nav button.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    main {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
     .tab { display: none; }
     .tab.active { display: block; }
-    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 18px; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
-    .kpi-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
-    .kpi-val { font-size: 26px; font-weight: 700; margin-top: 6px; }
-    .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)); gap: 16px; }
-    table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
-    th { color: var(--muted); font-weight: 600; }
-    .pill { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
-    .pill-ok { background: rgba(34,197,94,0.16); color: #4ade80; }
-    .pill-esc { background: rgba(239,68,68,0.2); color: #fca5a5; }
-    .pill-neu { background: rgba(148,163,184,0.18); color: #cbd5e1; }
-    .btn { background: #0284c7; color: white; border: none; padding: 8px 14px; border-radius: 7px; font-weight: 600; cursor: pointer; font-size: 13px; }
-    .btn:hover { background: #0369a1; }
-    .policy-banner { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.4); color: #fde68a; padding: 10px 14px; border-radius: 8px; font-size: 12.5px; margin-bottom: 14px; }
-    img.svg-fig { width: 100%; border-radius: 8px; border: 1px solid var(--border); background: #0f172a; }
-    select, input[type=file] { background: var(--card); color: var(--text); border: 1px solid var(--border); padding: 7px 10px; border-radius: 6px; font-size: 13px; }
-    .bar-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; font-size: 12px; }
-    .bar-track { flex: 1; height: 12px; background: #0f172a; border-radius: 6px; overflow: hidden; }
-    .bar-fill { height: 100%; background: var(--accent); }
+
+    h2 {
+      margin: 0 0 8px 0;
+      color: var(--text);
+      font-size: 1.25rem;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+    }
+
+    h3 {
+      margin: 0 0 8px 0;
+      color: var(--text);
+      font-size: 1.02rem;
+      font-weight: 600;
+    }
+
+    h4 {
+      margin: 0 0 6px 0;
+      color: var(--text);
+      font-size: 0.94rem;
+      font-weight: 600;
+    }
+
+    .section-header {
+      margin-bottom: 16px;
+    }
+
+    .section-desc {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      max-width: 78ch;
+    }
+
+    .section-block {
+      margin-top: 28px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+
+    .kpi-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .kpi-val {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 6px 0 4px 0;
+      line-height: 1.2;
+    }
+
+    .kpi-sub {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .grid4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .grid2 > *, .grid4 > * {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    /* Tables */
+    .table-wrap {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.8rem;
+      background: var(--surface-subtle);
+      white-space: nowrap;
+    }
+
+    #overview-table th,
+    #overview-table td {
+      padding: 9px 8px;
+      font-size: 0.82rem;
+    }
+
+    #overview-table th {
+      white-space: normal;
+      line-height: 1.25;
+    }
+
+    th small {
+      display: block;
+      font-weight: 500;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    tbody tr:hover {
+      background: #f8fafc;
+    }
+
+    tr.best-row td {
+      background: #f0f9ff;
+    }
+
+    .num {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* Pills & Badges */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      line-height: 1.35;
+      max-width: 100%;
+    }
+
+    .pill-ok {
+      background: var(--ok-bg);
+      color: var(--ok);
+      border: 1px solid var(--ok-border);
+    }
+
+    .pill-esc {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid var(--danger-border);
+    }
+
+    .pill-warn {
+      background: var(--warn-bg);
+      color: var(--warn);
+      border: 1px solid var(--warn-border);
+    }
+
+    .pill-neu {
+      background: var(--surface-subtle);
+      color: var(--text-body);
+      border: 1px solid var(--border);
+    }
+
+    .dir-tag {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid #bfdbfe;
+    }
+
+    /* Controls & Buttons */
+    .toolbar {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .control-group label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    select, input[type="file"] {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border-strong);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      max-width: 100%;
+    }
+
+    .btn {
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: background-color 0.15s ease;
+    }
+    .btn:hover { background: var(--accent-hover); }
+    .btn:disabled { opacity: 0.6; cursor: wait; }
+
+    .btn-subtle {
+      background: var(--surface-subtle);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 7px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.82rem;
+    }
+    .btn-subtle:hover { background: var(--accent-soft); border-color: #bfdbfe; }
+
+    /* Bar rows */
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 9px 0;
+      font-size: 0.875rem;
+    }
+    .bar-name { width: 110px; font-weight: 500; color: var(--text); flex-shrink: 0; }
+    .bar-track {
+      flex: 1;
+      height: 12px;
+      background: var(--surface-subtle);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+    .bar-pct { width: 56px; text-align: right; color: var(--text); font-weight: 600; }
+
+    /* Graph & Figure container with non-obstructive interactive tooltip */
+    .chart-box {
+      position: relative;
+    }
+
+    .chart-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .chart-title-wrap h3,
+    .chart-title-wrap h4 {
+      margin-bottom: 2px;
+    }
+
+    .chart-subtitle {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .chart-info-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--surface-subtle);
+      color: var(--text-body);
+      border: 1px solid var(--border-strong);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .chart-info-btn:hover,
+    .chart-info-btn[aria-expanded="true"] {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: #93c5fd;
+    }
+
+    .chart-info-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #ffffff;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .chart-stage {
+      position: relative;
+    }
+
+    /* Tooltip renders ABOVE the plotted graph (or flips below the entire card if near viewport top) */
+    .chart-tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 10px);
+      right: 0;
+      width: min(370px, calc(100vw - 48px));
+      background: var(--surface);
+      color: var(--text-body);
+      border: 1px solid var(--border-strong);
+      border-top: 3px solid var(--accent);
+      border-radius: 10px;
+      padding: 13px 15px;
+      box-shadow: var(--shadow-pop);
+      z-index: 60;
+      font-size: 0.81rem;
+      line-height: 1.45;
+      pointer-events: auto;
+    }
+
+    .chart-box.open .chart-tooltip {
+      display: block;
+    }
+
+    .chart-box.tooltip-below .chart-tooltip {
+      bottom: auto;
+      top: calc(100% + 10px);
+    }
+
+    .chart-tooltip .tt-row {
+      margin: 0 0 6px 0;
+    }
+    .chart-tooltip .tt-row:last-child {
+      margin-bottom: 0;
+    }
+    .chart-tooltip strong {
+      color: var(--text);
+    }
+
+    .svg-frame {
+      background: #0f172a;
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      padding: 8px;
+      overflow: hidden;
+    }
+
+    img.svg-fig {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+    }
+
+    .caption-text {
+      margin: 12px 0 0 0;
+      font-size: 0.88rem;
+      color: var(--text-body);
+    }
+
+    .metric-guide {
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: var(--surface-subtle);
+      border-radius: 8px;
+      font-size: 0.83rem;
+      color: var(--text-body);
+    }
+
+    .metric-guide p {
+      margin: 4px 0;
+    }
+
+    .finding-callout {
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: var(--accent-soft);
+      border-left: 3px solid var(--accent);
+      border-radius: 6px;
+      font-size: 0.86rem;
+      color: var(--text);
+    }
+
+    .matrix-cell {
+      text-align: center;
+      font-weight: 600;
+      border-radius: 4px;
+    }
+
+    .audio-row {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    audio {
+      width: 100%;
+      height: 38px;
+    }
+
+    @media (max-width: 1024px) {
+      .grid4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 768px) {
+      .header-inner, .nav-inner, main { padding-left: 16px; padding-right: 16px; }
+      .grid2, .grid4 { grid-template-columns: minmax(0, 1fr); }
+      .card { padding: 16px; }
+      .bar-name { width: 92px; }
+
+      /* On small touch screens, show tooltip neatly in-flow above the chart stage so it never clips or covers the graph */
+      .chart-tooltip {
+        position: static;
+        width: 100%;
+        margin: 0 0 12px 0;
+        box-shadow: none;
+        border: 1px solid #bfdbfe;
+        border-top: 3px solid var(--accent);
+        background: var(--accent-soft);
+      }
+      .chart-box.tooltip-below .chart-tooltip {
+        top: auto;
+        bottom: auto;
+      }
+    }
   </style>
 </head>
 <body>
 <header>
-  <div>
-    <h1>Contact-Center SER &amp; Conversation Analytics Tool</h1>
-    <div style="font-size:12px;color:var(--muted)">Java 21 + ONNX Runtime (ResNet-SER &amp; Causal Context Transformer) | CREMA-D + RAVDESS</div>
+  <div class="header-inner">
+    <h1>Speech Emotion Recognition and Conversation Analytics</h1>
   </div>
-  <span class="badge">EU AI Act Art. 5(1)(f) Customer-Only Policy Active</span>
 </header>
 
-<nav>
-  <button class="active" onclick="showTab('overview', this)">Dashboard Overview</button>
-  <button onclick="showTab('analysis', this)">Conversation Analysis</button>
-  <button onclick="showTab('research', this)">Research &amp; Benchmarks</button>
-  <button onclick="showTab('math', this)">Math Sandbox &amp; Paradigms</button>
-  <button onclick="showTab('ethics', this)">Responsible AI &amp; Go/No-Go</button>
+<nav aria-label="Main sections">
+  <div class="nav-inner">
+    <button class="active" onclick="showTab('overview', this)">Overview</button>
+    <button onclick="showTab('analysis', this)">Conversation Analysis</button>
+    <button onclick="showTab('research', this)">Research &amp; Benchmarks</button>
+    <button onclick="showTab('math', this)">Sandbox</button>
+  </div>
 </nav>
 
 <main>
   <!-- TAB 1: OVERVIEW -->
   <section id="tab-overview" class="tab active">
-    <div class="policy-banner">
-      All emotion predictions are calibrated estimates of <strong>expressed vocal emotion</strong> (never internal psychological state). Customer-only default mode omits agent emotion scoring per EU AI Act Art. 5(1)(f).
+    <div class="section-header">
+      <h2>Conversation Overview</h2>
+      <p class="section-desc">Summary of analyzed customer support calls, detected frustration escalations, and processing speed.</p>
     </div>
+
     <div class="kpis" id="overview-kpis"></div>
+
     <div class="grid2">
       <div class="card">
-        <h3>Customer Emotion Distribution (Processed Calls)</h3>
-        <div id="overview-dist"></div>
+        <div id="overview-dist-container"></div>
       </div>
+
       <div class="card">
-        <h3>Processed Contact-Center Calls</h3>
-        <table id="overview-table">
-          <thead><tr><th>Call ID</th><th>Duration</th><th>Turns</th><th>Escalation</th><th>Peak HMM P</th><th>RTF</th><th>Action</th></tr></thead>
-          <tbody></tbody>
-        </table>
+        <h3>Analyzed Conversations</h3>
+        <p class="chart-subtitle" style="margin-bottom:12px">Click View Details on any recording to inspect its turn-by-turn emotion timeline.</p>
+        <div class="table-wrap">
+          <table id="overview-table">
+            <thead>
+              <tr>
+                <th>Conversation</th>
+                <th class="num">Duration</th>
+                <th class="num">Turns</th>
+                <th>Status</th>
+                <th class="num">Peak Escalation Likelihood</th>
+                <th class="num">Speed Ratio</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- TAB 2: CONVERSATION ANALYSIS -->
   <section id="tab-analysis" class="tab">
-    <div class="card" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-      <label>Select Call: <select id="conv-select" onchange="loadConversation(this.value)"></select></label>
-      <span style="color:var(--muted)">or Upload WAV (16-bit PCM):</span>
-      <input type="file" id="wav-upload" accept=".wav"/>
-      <button class="btn" onclick="uploadWav()">Analyze WAV in Java ONNX</button>
-      <label style="font-size:12px;color:var(--muted)"><input type="checkbox" id="research-mode-chk"/> Research Mode (show corpus agent channel)</label>
+    <div class="section-header">
+      <h2>Conversation Analysis</h2>
+      <p class="section-desc">Listen to a call recording, inspect how customer vocal emotion changed over time, or upload a new 16-bit Waveform Audio recording.</p>
+    </div>
+
+    <div class="card">
+      <div class="toolbar">
+        <div class="control-group">
+          <label for="conv-select">Select a Call:</label>
+          <select id="conv-select" onchange="loadConversation(this.value)"></select>
+        </div>
+        <div class="control-group">
+          <label for="wav-upload">Upload Audio (16-bit Waveform Audio, .wav):</label>
+          <input type="file" id="wav-upload" accept=".wav"/>
+          <button class="btn" id="upload-btn" onclick="uploadWav()">Analyze Recording</button>
+        </div>
+        <label style="font-size:0.85rem;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer">
+          <input type="checkbox" id="research-mode-chk"/> Include support agent emotions (research use only)
+        </label>
+      </div>
     </div>
 
     <div class="card" id="conv-header-card">
       <div id="conv-summary"></div>
-      <audio id="conv-audio" controls style="width:100%;margin-top:10px"></audio>
-      <div id="conv-risks" style="margin-top:10px"></div>
+      <div class="audio-row">
+        <audio id="conv-audio" controls preload="metadata"></audio>
+        <div id="conv-risks" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+      </div>
     </div>
 
     <div class="grid2">
       <div class="card">
-        <h3>Customer Escalation Progression (HMM P(Escalated) &amp; CUSUM)</h3>
-        <svg id="esc-chart" width="100%" height="230" viewBox="0 0 560 230" style="background:#0f172a;border-radius:8px"></svg>
+        <div id="esc-chart-box"></div>
       </div>
       <div class="card">
-        <h3>Customer Emotion Transition Matrix (Contextual)</h3>
-        <div id="trans-matrix"></div>
+        <div id="trans-matrix-box"></div>
       </div>
     </div>
 
     <div class="card">
-      <h3>Utterance-by-Utterance Timeline</h3>
-      <table id="utt-table">
-        <thead><tr><th>#</th><th>Time</th><th>Speaker</th><th>Acoustic Est.</th><th>Contextual Est.</th><th>Conf</th><th>HMM Esc P</th><th>CUSUM</th><th>F0 (Hz)</th><th>Events</th></tr></thead>
-        <tbody></tbody>
-      </table>
+      <h3>Speaking Turn Timeline</h3>
+      <p class="chart-subtitle" style="margin-bottom:12px">Turn-by-turn breakdown comparing single-turn voice predictions with conversation-aware context estimates.</p>
+      <div class="table-wrap">
+        <table id="utt-table">
+          <thead>
+            <tr>
+              <th>Turn</th>
+              <th>Time Window</th>
+              <th>Speaker</th>
+              <th>Single-Turn Voice Estimate</th>
+              <th>Conversation-Aware Estimate</th>
+              <th class="num">Confidence</th>
+              <th class="num">Escalation Likelihood</th>
+              <th class="num">Drift Score</th>
+              <th class="num">Average Pitch (Hz)</th>
+              <th>Voice Characteristics</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
   <!-- TAB 3: RESEARCH & BENCHMARKS -->
   <section id="tab-research" class="tab">
-    <div id="research-content">Loading verified results...</div>
+    <div id="research-content">Loading research benchmarks...</div>
   </section>
 
-  <!-- TAB 4: MATH SANDBOX -->
+  <!-- TAB 4: SANDBOX -->
   <section id="tab-math" class="tab">
-    <div id="math-content">Loading Java ser-math summary...</div>
-  </section>
-
-  <!-- TAB 5: RESPONSIBLE AI -->
-  <section id="tab-ethics" class="tab">
-    <div class="card">
-      <h3>Responsible AI, Limitations &amp; Go/No-Go Deployment Posture</h3>
-      <ul>
-        <li><strong>Vocal Expression vs Internal State:</strong> Labels reflect perceived/acted vocal emotion in CREMA-D &amp; RAVDESS, never mental health, personality, or true psychological state.</li>
-        <li><strong>EU AI Act Art. 5(1)(f):</strong> Workplace emotion recognition of employees/agents is prohibited in the EU; this product operates in customer-only mode by default.</li>
-        <li><strong>Domain Shift &amp; Telephony Robustness:</strong> Models trained on studio 16 kHz acted audio degrade under low SNR or 8 kHz telephony bandlimiting, and cross-corpus transfer (CREMA-D &rarr; RAVDESS) drops relative to in-corpus speaker-independent scores.</li>
-        <li><strong>Subgroup Fairness &amp; Calibration:</strong> Subgroup UAR across sex, age, and race/ethnicity plus temperature-scaled ECE are reported directly from test splits in the Research tab.</li>
-        <li><strong>Go / No-Go Recommendation:</strong> <em>Conditional Go for Assisted Post-Call Quality Triage</em> (using calibrated HMM/Context Escalation flags as human-in-the-loop review ranking); <em>No-Go for automated punitive action, real-time unsupervised decisions, or employee scoring</em>.</li>
-      </ul>
+    <div class="section-header">
+      <h2>Mathematical Sandbox</h2>
     </div>
+    <div id="math-content">Loading visualizations...</div>
   </section>
 </main>
 
 <script>
-let researchCache = null;
+const EMOTION_FULL = {
+  NEU: 'Neutral',
+  HAP: 'Happy',
+  SAD: 'Sad',
+  ANG: 'Angry',
+  FEA: 'Fearful',
+  DIS: 'Disgust',
+  REDACTED_POLICY: 'Hidden (Privacy Mode)'
+};
+
+const EMOTION_COLORS = {
+  NEU: '#64748b',
+  HAP: '#0f766e',
+  SAD: '#2563eb',
+  ANG: '#b91c1c',
+  FEA: '#7c3aed',
+  DIS: '#b45309'
+};
+
+const SPEAKER_FULL = {
+  CUSTOMER: 'Customer',
+  AGENT: 'Support Agent'
+};
+
+const EVENT_FULL = {
+  HIGH_VOCAL_INTENSITY: 'Raised Voice',
+  SHORT_BURST: 'Short Utterance',
+  SUSTAINED_TURN: 'Long Speaking Turn',
+  NORMAL_SPEECH: 'Normal Speech'
+};
+
+const FEATURE_NAMES = {
+  'Log-Mel (64x128)': 'Logarithmic Mel Spectrogram (64 frequency bands)',
+  'Linear Mel (64x128)': 'Linear Mel Spectrogram (64 frequency bands)',
+  'STFT Mag (64x128)': 'Short-Time Fourier Transform Magnitude Spectrogram',
+  'MFCC + Delta (40x128)': 'Mel-Frequency Cepstral Coefficients and Time Derivatives'
+};
+
+const ARCH_NAMES = {
+  'MLP-Baseline': 'Multilayer Perceptron Baseline (64 hand-crafted voice features)',
+  'CNN-Basic': 'Basic Convolutional Neural Network',
+  'CNN-Deep': 'Deep Convolutional Neural Network',
+  'GoogLeNet-SER': 'Multi-Scale Inception Convolutional Network (GoogLeNet)',
+  'ResNet-SER': 'Residual Convolutional Neural Network (ResNet)',
+  'ResNet-SER + SpecAug': 'Residual Neural Network with Spectrogram Augmentation',
+  'Conv3D-SER': 'Three-Dimensional Convolutional Neural Network'
+};
+
+const SEGDET_NAMES = {
+  'SpecUNet-1D (Seg)': 'One-Dimensional U-Net Semantic Segmentation',
+  'R-CNN-1D (Two-Stage Slow)': 'Two-Stage Region Convolutional Detector',
+  'Fast-RCNN-1D (RoI-Align)': 'Shared-Feature Region Detector with Feature Alignment',
+  'Faster-RCNN-1D (RPN+RoI)': 'Learned Region Proposal Convolutional Detector',
+  'YOLO-1D (Single-Stage)': 'Single-Shot Grid Detector',
+  'RetinaNet-1D (FPN+Focal)': 'Multi-Scale Feature Pyramid Detector with Focal Loss'
+};
+
+const CTX_NAMES = {
+  'No-Context (ResNet-SER)': 'Single-Turn Residual Neural Network (No Conversation History)',
+  'HMM-Forward (Control)': 'Hidden Markov Model Temporal Filter (Statistical Control)',
+  'ResNet + Causal LSTM': 'Residual Network + Forward Long Short-Term Memory Network',
+  'ResNet + BiLSTM': 'Residual Network + Bidirectional Long Short-Term Memory Network',
+  'ResNet + Causal Transformer': 'Residual Network + Forward Attention Transformer',
+  'ResNet + Bidir Transformer': 'Residual Network + Bidirectional Attention Transformer'
+};
+
+const ESC_DETECTOR_NAMES = {
+  'D1_Threshold (Audio-Only CNN)': 'Simple Single-Turn Threshold (Audio Model)',
+  'D4_CUSUM (Audio-Only CNN)': 'Cumulative Sum Drift Tracker (Audio Model)',
+  'D1_Threshold (Context)': 'Simple Single-Turn Threshold (Conversation Transformer)',
+  'D2_SlidingWindow (Context)': 'Sliding Average Window (Conversation Transformer)',
+  'D3_EWMA (Context)': 'Exponentially Weighted Moving Average (Conversation Transformer)',
+  'D4_CUSUM (Context)': 'Cumulative Sum Drift Tracker (Conversation Transformer)',
+  'D5_HMM_Filter (Context)': 'Hidden Markov Model Escalation Filter (Conversation Transformer)',
+  'D6_TransformerHead (Context)': 'Learned Transformer Escalation Head (Conversation Transformer)'
+};
+
+const ROBUST_NAMES = {
+  'Clean (Studio 16kHz)': 'Clean Studio Audio (16 kHz)',
+  'SNR 20 dB': 'Mild Background Noise (20 dB Signal-to-Noise Ratio)',
+  'SNR 10 dB': 'Moderate Background Noise (10 dB Signal-to-Noise Ratio)',
+  'SNR 5 dB': 'Heavy Background Noise (5 dB Signal-to-Noise Ratio)',
+  'SNR 0 dB': 'Extreme Noise (0 dB Equal Signal and Noise)',
+  '8kHz Telephony Bandlimit': 'Simulated Phone Call Quality (8 kHz Bandwidth)'
+};
+
+function fullEmotion(code) {
+  return EMOTION_FULL[code] || code;
+}
+
+function fullSpeaker(code) {
+  return SPEAKER_FULL[code] || code;
+}
+
+function fullEvents(events) {
+  if (!events || !events.length) return 'Normal Speech';
+  return events.map(e => EVENT_FULL[e] || e).join(', ');
+}
+
+function humanizeCallName(id) {
+  return String(id || '')
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function humanizeRisk(raw) {
+  const s = String(raw || '');
+  if (s.startsWith('ESCALATION_DETECTED')) {
+    const m = s.match(/turn (\d+)\s*\(([^,]+),\s*peak HMM prob=([^)]+)\)/i);
+    const label = m
+      ? `Escalation detected at Turn ${m[1]} (${m[2]}, ${(parseFloat(m[3]) * 100).toFixed(0)}% peak likelihood)`
+      : 'Escalation detected during conversation';
+    return { cls: 'pill-esc', text: label };
+  }
+  if (s.startsWith('SUSTAINED_NEGATIVE_AFFECT')) {
+    const m = s.match(/=\s*([\d.]+%)/);
+    return {
+      cls: 'pill-warn',
+      text: m ? `Sustained frustrated tone (${m[1]} angry or disgusted speech)` : 'Sustained frustrated tone'
+    };
+  }
+  if (s.startsWith('REPEATED_HIGH_VOCAL_INTENSITY')) {
+    return { cls: 'pill-warn', text: 'Repeated raised-voice customer segments' };
+  }
+  if (s.startsWith('LOW_RISK')) {
+    return { cls: 'pill-ok', text: 'Low risk: customer vocal tone remained calm or resolved' };
+  }
+  return { cls: 'pill-neu', text: s };
+}
+
+function buildPlainSummary(rep) {
+  const custDist = rep.customerEmotionDistribution || {};
+  let topCode = 'NEU';
+  let topShare = -1;
+  for (const [k, v] of Object.entries(custDist)) {
+    if (v > topShare) { topShare = v; topCode = k; }
+  }
+  const custCount = (rep.utterances || []).filter(u => u.speakerId === 'CUSTOMER').length;
+  const domText = topShare >= 0 ? `${fullEmotion(topCode)} (${(topShare * 100).toFixed(1)}%)` : 'Not available';
+  const statusText = rep.escalationDetected
+    ? `Escalation flagged at Turn ${rep.escalationOnsetTurn} (peak likelihood ${(rep.peakHmmEscalationProb * 100).toFixed(0)}%).`
+    : `No sustained escalation flagged (peak likelihood ${(rep.peakHmmEscalationProb * 100).toFixed(0)}%).`;
+  return `Recording duration: ${rep.totalDurationSec.toFixed(1)} seconds across ${custCount} customer speaking turns. Most frequent customer expression: ${domText}. ${statusText}`;
+}
+
+function pct(v, digits = 2) {
+  if (v == null || isNaN(v)) return '—';
+  return (v * 100).toFixed(digits) + '%';
+}
+
+function num(v, digits = 2) {
+  if (v == null || isNaN(v)) return '—';
+  return Number(v).toFixed(digits);
+}
 
 function showTab(name, btn) {
+  closeAllTooltips();
   document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   if (btn) btn.classList.add('active');
 }
 
+/* Reusable non-obstructive Chart Box with 4-part Hover / Touch Tooltip */
+function chartCard({ title, subtitle = '', bodyHtml, footerHtml = '', tooltip, headingTag = 'h3' }) {
+  return `
+    <div class="chart-box">
+      <div class="chart-head">
+        <div class="chart-title-wrap">
+          <${headingTag}>${title}</${headingTag}>
+          ${subtitle ? `<p class="chart-subtitle">${subtitle}</p>` : ''}
+        </div>
+        <button type="button" class="chart-info-btn" aria-expanded="false" aria-label="Explain ${title}">
+          <span class="chart-info-icon">?</span> Guide
+        </button>
+      </div>
+      <div class="chart-tooltip" role="tooltip">
+        <p class="tt-row"><strong>What this graph shows:</strong> ${tooltip.what}</p>
+        <p class="tt-row"><strong>Axes:</strong> ${tooltip.axes}</p>
+        <p class="tt-row"><strong>How to read it:</strong> ${tooltip.how}</p>
+        <p class="tt-row"><strong>Why it is useful:</strong> ${tooltip.why}</p>
+      </div>
+      <div class="chart-stage">${bodyHtml}</div>
+      ${footerHtml}
+    </div>
+  `;
+}
+
+function positionTooltip(box) {
+  if (window.innerWidth <= 768) {
+    box.classList.remove('tooltip-below');
+    return;
+  }
+  const rect = box.getBoundingClientRect();
+  if (rect.top < 250) {
+    box.classList.add('tooltip-below');
+  } else {
+    box.classList.remove('tooltip-below');
+  }
+}
+
+function closeAllTooltips(exceptBox = null) {
+  document.querySelectorAll('.chart-box.open').forEach(b => {
+    if (b !== exceptBox) {
+      b.classList.remove('open', 'pinned');
+      const btn = b.querySelector('.chart-info-btn');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
+
+(function bindTooltipEvents() {
+  const isTouchLike = () => window.matchMedia('(hover: none), (pointer: coarse)').matches || window.innerWidth <= 768;
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.chart-info-btn');
+    if (btn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const box = btn.closest('.chart-box');
+      const willOpen = !box.classList.contains('open') || !box.classList.contains('pinned');
+      closeAllTooltips(box);
+      if (willOpen) {
+        positionTooltip(box);
+        box.classList.add('open', 'pinned');
+        btn.setAttribute('aria-expanded', 'true');
+      } else {
+        box.classList.remove('open', 'pinned');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+      return;
+    }
+
+    if (isTouchLike()) {
+      const stage = e.target.closest('.chart-stage');
+      if (stage) {
+        const box = stage.closest('.chart-box');
+        const btn = box.querySelector('.chart-info-btn');
+        const willOpen = !box.classList.contains('open');
+        closeAllTooltips(box);
+        if (willOpen) {
+          positionTooltip(box);
+          box.classList.add('open', 'pinned');
+          if (btn) btn.setAttribute('aria-expanded', 'true');
+        } else {
+          box.classList.remove('open', 'pinned');
+          if (btn) btn.setAttribute('aria-expanded', 'false');
+        }
+        return;
+      }
+    }
+
+    if (!e.target.closest('.chart-tooltip')) {
+      closeAllTooltips();
+    }
+  });
+
+  document.addEventListener('pointerover', (e) => {
+    if (isTouchLike() || e.pointerType === 'touch') return;
+    const trigger = e.target.closest('.chart-stage, .chart-info-btn');
+    if (!trigger) return;
+    const box = trigger.closest('.chart-box');
+    if (!box) return;
+    positionTooltip(box);
+    box.classList.add('open');
+    const btn = box.querySelector('.chart-info-btn');
+    if (btn) btn.setAttribute('aria-expanded', 'true');
+  });
+
+  document.addEventListener('pointerout', (e) => {
+    if (isTouchLike() || e.pointerType === 'touch') return;
+    const box = e.target.closest('.chart-box');
+    if (!box || box.classList.contains('pinned')) return;
+    if (e.relatedTarget && box.contains(e.relatedTarget)) return;
+    box.classList.remove('open');
+    const btn = box.querySelector('.chart-info-btn');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAllTooltips();
+  });
+})();
+
+/* Horizontal inline SVG bar chart builder (light clinical styling with auto 2-line label wrap) */
+function wrapSvgLabel(text, maxChars = 34) {
+  if (text.length <= maxChars) return [text];
+  const words = text.split(' ');
+  const lines = [];
+  let cur = '';
+  for (const w of words) {
+    if ((cur + ' ' + w).trim().length <= maxChars || !cur) {
+      cur = (cur + ' ' + w).trim();
+    } else {
+      lines.push(cur);
+      cur = w;
+    }
+  }
+  if (cur) lines.push(cur);
+  if (lines.length > 2) return [lines[0], lines.slice(1).join(' ')];
+  return lines;
+}
+
+function horizontalBarSvg(items, { valueMax = 100, suffix = '%', highlightTop = true, colorDefault = '#1d4ed8', colorBest = '#0f766e' }) {
+  if (!items.length) return '';
+  const rowH = 42;
+  const padL = 248, padR = 68, padT = 10, padB = 24;
+  const W = 680;
+  const H = padT + items.length * rowH + padB;
+  const pw = W - padL - padR;
+  const bestVal = Math.max(...items.map(i => i.val));
+
+  const ticks = [0, 0.25, 0.5, 0.75, 1.0].map(f => {
+    const x = padL + f * pw;
+    const label = (f * valueMax).toFixed(valueMax <= 1.2 ? 2 : 0) + suffix;
+    return `
+      <line x1="${x.toFixed(1)}" y1="${padT}" x2="${x.toFixed(1)}" y2="${H - padB}" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="${x.toFixed(1)}" y="${H - 6}" fill="#64748b" font-size="10.5" text-anchor="middle">${label}</text>
+    `;
+  }).join('');
+
+  const bars = items.map((item, idx) => {
+    const y = padT + idx * rowH;
+    const w = Math.max(2, (item.val / Math.max(1e-6, valueMax)) * pw);
+    const isBest = highlightTop && Math.abs(item.val - bestVal) < 1e-6;
+    const fill = item.color || (isBest ? colorBest : colorDefault);
+    const valStr = item.val.toFixed(valueMax <= 1.2 ? 3 : 2) + suffix;
+    const lines = wrapSvgLabel(item.label, 34);
+    const labelSvg = lines.length === 1
+      ? `<text x="${padL - 10}" y="${y + 24}" fill="#0f172a" font-size="11.2" font-weight="${isBest ? '600' : '500'}" text-anchor="end">${lines[0]}</text>`
+      : `<text x="${padL - 10}" y="${y + 16}" fill="#0f172a" font-size="11" font-weight="${isBest ? '600' : '500'}" text-anchor="end">${lines[0]}<tspan x="${padL - 10}" dy="13">${lines[1]}</tspan></text>`;
+    return `
+      ${labelSvg}
+      <rect x="${padL}" y="${y + 11}" width="${pw}" height="18" rx="4" fill="#f1f5f9"/>
+      <rect x="${padL}" y="${y + 11}" width="${w.toFixed(1)}" height="18" rx="4" fill="${fill}"/>
+      <text x="${(padL + w + 7).toFixed(1)}" y="${y + 24}" fill="#0f172a" font-size="11.5" font-weight="600">${valStr}</text>
+    `;
+  }).join('');
+
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;background:#ffffff;border:1px solid #e2e8f0;border-radius:8px">${ticks}${bars}</svg>`;
+}
+
 async function init() {
-  const [ov, convs, res] = await Promise.all([
-    fetch('/api/overview').then(r => r.json()),
-    fetch('/api/conversations').then(r => r.json()),
-    fetch('/api/research').then(r => r.json()),
-  ]);
-  renderOverview(ov, convs);
-  populateConvSelect(convs);
-  if (convs.length > 0) await loadConversation(convs[0].conversationId);
-  researchCache = res;
-  renderResearch(res);
-  renderMath(res.mathSandbox);
+  try {
+    const [ov, convs, res] = await Promise.all([
+      fetch('/api/overview').then(r => r.json()),
+      fetch('/api/conversations').then(r => r.json()),
+      fetch('/api/research').then(r => r.json())
+    ]);
+    renderOverview(ov, convs);
+    populateConvSelect(convs);
+    if (convs.length > 0) await loadConversation(convs[0].conversationId);
+    renderResearch(res);
+    renderMath(res.mathSandbox);
+  } catch (err) {
+    console.error('Failed to initialize dashboard:', err);
+  }
 }
 
 function renderOverview(ov, convs) {
   document.getElementById('overview-kpis').innerHTML = `
-    <div class="card"><div class="kpi-label">Conversations Processed</div><div class="kpi-val">${ov.totalConversations}</div></div>
-    <div class="card"><div class="kpi-label">Escalations Detected</div><div class="kpi-val" style="color:var(--warn)">${ov.escalationsDetected} (${(ov.escalationRate*100).toFixed(0)}%)</div></div>
-    <div class="card"><div class="kpi-label">Avg Processing Latency</div><div class="kpi-val">${ov.avgProcessingMs} ms</div></div>
-    <div class="card"><div class="kpi-label">Avg Real-Time Factor</div><div class="kpi-val" style="color:var(--ok)">${ov.avgRtf}</div></div>
+    <div class="kpi-card">
+      <div class="kpi-label">Conversations Analyzed</div>
+      <div class="kpi-val">${ov.totalConversations}</div>
+      <p class="kpi-sub">Total support call recordings processed</p>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Escalations Flagged</div>
+      <div class="kpi-val" style="color:${ov.escalationsDetected > 0 ? 'var(--warn)' : 'var(--ok)'}">${ov.escalationsDetected} (${(ov.escalationRate * 100).toFixed(0)}%)</div>
+      <p class="kpi-sub">Calls showing sustained customer frustration</p>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Average Analysis Time</div>
+      <div class="kpi-val">${ov.avgProcessingMs} ms</div>
+      <p class="kpi-sub">Lower is faster per recording</p>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Processing Speed Ratio</div>
+      <div class="kpi-val" style="color:var(--ok)">${ov.avgRtf}</div>
+      <p class="kpi-sub">Real-Time Factor (under 0.10 runs 10x faster than live speech)</p>
+    </div>
   `;
-  const distDiv = document.getElementById('overview-dist');
-  distDiv.innerHTML = Object.entries(ov.emotionDistribution || {}).map(([k, v]) => `
-    <div class="bar-row"><span style="width:42px">${k}</span>
-      <div class="bar-track"><div class="bar-fill" style="width:${(v*100).toFixed(1)}%"></div></div>
-      <span style="width:48px;text-align:right">${(v*100).toFixed(1)}%</span></div>
+
+  const distEntries = Object.entries(ov.emotionDistribution || {});
+  const barsHtml = distEntries.map(([code, v]) => `
+    <div class="bar-row">
+      <span class="bar-name">${fullEmotion(code)}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${(v * 100).toFixed(1)}%;background:${EMOTION_COLORS[code] || '#1d4ed8'}"></div></div>
+      <span class="bar-pct">${(v * 100).toFixed(1)}%</span>
+    </div>
   `).join('');
 
-  const tbody = document.querySelector('#overview-table tbody');
-  tbody.innerHTML = convs.map(c => `
+  document.getElementById('overview-dist-container').innerHTML = chartCard({
+    title: 'Customer Vocal Emotion Breakdown',
+    subtitle: 'Average distribution of estimated customer vocal expressions across all analyzed calls.',
+    bodyHtml: `<div>${barsHtml}</div>`,
+    tooltip: {
+      what: 'The average share of customer speaking turns estimated in each vocal emotion category across all processed calls.',
+      axes: 'Vertical: Vocal emotion category · Horizontal: Percentage of customer speech time or probability mass (0% to 100%).',
+      how: 'Longer bars indicate emotions that occurred more frequently across your loaded conversations.',
+      why: 'Helps supervisors spot whether frustration-related tones (such as Angry or Disgust) appear unusually often compared to Neutral speech.'
+    }
+  });
+
+  document.querySelector('#overview-table tbody').innerHTML = convs.map(c => `
     <tr>
-      <td><strong>${c.conversationId}</strong></td>
-      <td>${c.totalDurationSec.toFixed(1)}s</td>
-      <td>${c.totalUtterances}</td>
-      <td>${c.escalationDetected ? '<span class="pill pill-esc">ESCALATED</span>' : '<span class="pill pill-ok">STABLE</span>'}</td>
-      <td>${c.peakHmmEscalationProb.toFixed(2)}</td>
-      <td>${c.realTimeFactor.toFixed(4)}</td>
-      <td><button class="btn" style="padding:4px 9px;font-size:11px" onclick="inspectConv('${c.conversationId}')">Inspect</button></td>
+      <td><strong>${humanizeCallName(c.conversationId)}</strong></td>
+      <td class="num">${c.totalDurationSec.toFixed(1)} s</td>
+      <td class="num">${c.totalUtterances}</td>
+      <td>${c.escalationDetected ? '<span class="pill pill-esc">Escalation Flagged</span>' : '<span class="pill pill-ok">Stable</span>'}</td>
+      <td class="num">${(c.peakHmmEscalationProb * 100).toFixed(1)}%</td>
+      <td class="num">${c.realTimeFactor.toFixed(4)}</td>
+      <td><button class="btn-subtle" onclick="inspectConv('${c.conversationId}')">View Details</button></td>
     </tr>
   `).join('');
 }
 
 function populateConvSelect(convs) {
   const sel = document.getElementById('conv-select');
-  sel.innerHTML = convs.map(c => `<option value="${c.conversationId}">${c.conversationId} (${c.escalationDetected ? 'Escalated' : 'Stable'})</option>`).join('');
+  sel.innerHTML = convs.map(c =>
+    `<option value="${c.conversationId}">${humanizeCallName(c.conversationId)} (${c.escalationDetected ? 'Escalation Flagged' : 'Stable'})</option>`
+  ).join('');
 }
 
 function inspectConv(id) {
@@ -208,168 +1177,814 @@ function inspectConv(id) {
 
 async function loadConversation(id) {
   const rep = await fetch('/api/conversations/' + encodeURIComponent(id)).then(r => r.json());
-  document.getElementById('conv-summary').innerHTML = `
-    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
-      <div><strong>${rep.conversationId}</strong> (${rep.audioFileName}, ${rep.totalDurationSec}s, Java Proc: ${rep.processingTimeMs} ms, RTF: ${rep.realTimeFactor})</div>
-      <div>${rep.escalationDetected ? '<span class="pill pill-esc">ESCALATION ALERT</span>' : '<span class="pill pill-ok">NO ESCALATION</span>'}</div>
-    </div>
-    <p style="margin:8px 0 4px;color:#cbd5e1;font-size:13px">${rep.summaryText}</p>
-    <div style="font-size:11px;color:var(--warn)">${rep.policyNotice}</div>
-  `;
-  document.getElementById('conv-audio').src = '/api/audio/' + encodeURIComponent(rep.audioFileName);
-  document.getElementById('conv-risks').innerHTML = (rep.riskIndicators || []).map(r => `<span class="pill pill-neu" style="margin-right:6px">${r}</span>`).join('');
+  const statusPill = rep.escalationDetected
+    ? '<span class="pill pill-esc">Escalation Flagged</span>'
+    : '<span class="pill pill-ok">No Sustained Escalation</span>';
 
-  // Utterance table
-  document.querySelector('#utt-table tbody').innerHTML = rep.utterances.map(u => `
+  document.getElementById('conv-summary').innerHTML = `
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;align-items:center">
+      <div>
+        <h3 style="margin-bottom:2px">${humanizeCallName(rep.conversationId)}</h3>
+        <div style="font-size:0.83rem;color:var(--muted)">
+          Audio File: ${rep.audioFileName} &middot; Length: ${rep.totalDurationSec.toFixed(1)} s &middot; Analysis Time: ${rep.processingTimeMs.toFixed(1)} ms &middot; Speed Ratio: ${rep.realTimeFactor.toFixed(4)}
+        </div>
+      </div>
+      <div>${statusPill}</div>
+    </div>
+    <p style="margin:10px 0 0 0;font-size:0.93rem;color:var(--text)">${buildPlainSummary(rep)}</p>
+  `;
+
+  document.getElementById('conv-audio').src = '/api/audio/' + encodeURIComponent(rep.audioFileName);
+  document.getElementById('conv-risks').innerHTML = (rep.riskIndicators || []).map(r => {
+    const hr = humanizeRisk(r);
+    return `<span class="pill ${hr.cls}">${hr.text}</span>`;
+  }).join('');
+
+  document.querySelector('#utt-table tbody').innerHTML = (rep.utterances || []).map(u => `
     <tr>
       <td>${u.turnIndex}</td>
-      <td>${u.startSec.toFixed(2)}-${u.endSec.toFixed(2)}s</td>
-      <td><strong>${u.speakerId}</strong></td>
-      <td>${u.acousticEmotion} (${(u.acousticConfidence*100).toFixed(0)}%)</td>
-      <td><strong>${u.contextualEmotion}</strong></td>
-      <td>${(u.contextualConfidence*100).toFixed(1)}%</td>
-      <td>${u.speakerId === 'CUSTOMER' ? u.hmmEscalationProb.toFixed(3) : '-'}</td>
-      <td>${u.speakerId === 'CUSTOMER' ? u.cusumScore.toFixed(3) : '-'}</td>
-      <td>${u.f0MeanHz}</td>
-      <td style="font-size:11px">${(u.acousticEvents||[]).join(', ')}</td>
+      <td style="white-space:nowrap">${u.startSec.toFixed(2)}–${u.endSec.toFixed(2)} s</td>
+      <td><strong>${fullSpeaker(u.speakerId)}</strong></td>
+      <td>${fullEmotion(u.acousticEmotion)}${u.redactedByWorkplacePolicy ? '' : ` (${(u.acousticConfidence * 100).toFixed(0)}%)`}</td>
+      <td><strong>${fullEmotion(u.contextualEmotion)}</strong></td>
+      <td class="num">${u.redactedByWorkplacePolicy ? '—' : (u.contextualConfidence * 100).toFixed(1) + '%'}</td>
+      <td class="num">${u.speakerId === 'CUSTOMER' ? (u.hmmEscalationProb * 100).toFixed(1) + '%' : '—'}</td>
+      <td class="num">${u.speakerId === 'CUSTOMER' ? u.cusumScore.toFixed(2) : '—'}</td>
+      <td class="num">${u.f0MeanHz > 0 ? Math.round(u.f0MeanHz) + ' Hz' : '—'}</td>
+      <td style="font-size:0.82rem;color:var(--muted)">${fullEvents(u.acousticEvents)}</td>
     </tr>
   `).join('');
 
-  drawEscalationSvg(rep.utterances.filter(u => u.speakerId === 'CUSTOMER'));
-  drawTransitionMatrix(rep.transitionLabels, rep.transitionMatrix);
+  const custTurns = (rep.utterances || []).filter(u => u.speakerId === 'CUSTOMER');
+  document.getElementById('esc-chart-box').innerHTML = chartCard({
+    title: 'Customer Frustration Progression',
+    subtitle: 'Tracks rising frustration likelihood across customer speaking turns.',
+    bodyHtml: buildEscalationSvg(custTurns),
+    tooltip: {
+      what: 'How the customer’s estimated likelihood of sustained frustration changes from turn to turn.',
+      axes: 'Horizontal: Customer speaking turn number · Vertical: Probability / Drift Level (0% to 100%).',
+      how: 'If the red line crosses above the dashed 55% Alert Threshold, sustained vocal distress has persisted across consecutive turns.',
+      why: 'Separates a brief, isolated emotional reaction from genuine call escalation that needs supervisor follow-up.'
+    }
+  });
+
+  document.getElementById('trans-matrix-box').innerHTML = chartCard({
+    title: 'Customer Emotion Shifts',
+    subtitle: 'Shows how often the customer stayed in or switched between emotions on their next turn.',
+    bodyHtml: buildTransitionMatrixHtml(rep.transitionLabels, rep.transitionMatrix),
+    tooltip: {
+      what: 'A grid showing how often a customer moves from one vocal emotion (row) to another (column) on their next turn.',
+      axes: 'Vertical rows: Starting emotion · Horizontal columns: Following emotion.',
+      how: 'Darker blue cells near 100% indicate transitions that happened every time that starting emotion appeared.',
+      why: 'Reveals whether an interaction remained steady, recovered toward Neutral, or repeatedly shifted into Angry speech.'
+    }
+  });
 }
 
-function drawEscalationSvg(custTurns) {
-  const svg = document.getElementById('esc-chart');
-  if (!custTurns.length) { svg.innerHTML = ''; return; }
-  const W = 560, H = 230, padL = 44, padR = 20, padT = 22, padB = 34;
+function buildEscalationSvg(custTurns) {
+  if (!custTurns.length) return '<p class="chart-subtitle">No customer speaking turns detected in this recording.</p>';
+  const W = 560, H = 248, padL = 48, padR = 18, padT = 32, padB = 38;
   const pw = W - padL - padR, ph = H - padT - padB;
   const maxC = Math.max(1.0, ...custTurns.map(u => u.cusumScore));
-  const xOf = i => padL + (i / Math.max(1, custTurns.length - 1)) * pw;
+  const xOf = i => custTurns.length === 1 ? padL + pw / 2 : padL + (i / (custTurns.length - 1)) * pw;
   const yProb = v => padT + ph - v * ph;
   const yCus = v => padT + ph - (v / maxC) * ph;
+
+  const gridLines = [0, 0.25, 0.5, 0.75, 1.0].map(v => {
+    const y = yProb(v).toFixed(1);
+    return `
+      <line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="${padL - 8}" y="${Number(y) + 4}" fill="#64748b" font-size="10.5" text-anchor="end">${Math.round(v * 100)}%</text>
+    `;
+  }).join('');
+
+  const xLabels = custTurns.map((u, i) => `
+    <text x="${xOf(i).toFixed(1)}" y="${H - 18}" fill="#64748b" font-size="10.5" text-anchor="middle">${i + 1}</text>
+  `).join('');
 
   const hmmPts = custTurns.map((u, i) => `${xOf(i).toFixed(1)},${yProb(u.hmmEscalationProb).toFixed(1)}`).join(' ');
   const negPts = custTurns.map((u, i) => `${xOf(i).toFixed(1)},${yProb(u.negativeMass).toFixed(1)}`).join(' ');
   const cusPts = custTurns.map((u, i) => `${xOf(i).toFixed(1)},${yCus(u.cusumScore).toFixed(1)}`).join(' ');
+  const hmmDots = custTurns.map((u, i) => `<circle cx="${xOf(i).toFixed(1)}" cy="${yProb(u.hmmEscalationProb).toFixed(1)}" r="3.5" fill="#b91c1c"/>`).join('');
   const threshY = yProb(0.55).toFixed(1);
 
-  svg.innerHTML = `
-    <line x1="${padL}" y1="${threshY}" x2="${W-padR}" y2="${threshY}" stroke="#ef4444" stroke-dasharray="4,4"/>
-    <text x="${W-padR-4}" y="${threshY-4}" fill="#fca5a5" font-size="10" text-anchor="end">Alert Threshold (0.55)</text>
-    <polyline fill="none" stroke="#64748b" stroke-width="1.8" points="${negPts}"/>
-    <polyline fill="none" stroke="#f59e0b" stroke-width="2.0" points="${cusPts}"/>
-    <polyline fill="none" stroke="#ef4444" stroke-width="2.6" points="${hmmPts}"/>
-    <text x="${padL}" y="14" fill="#ef4444" font-size="11">HMM Escalation Prob</text>
-    <text x="${padL+140}" y="14" fill="#f59e0b" font-size="11">CUSUM</text>
-    <text x="${padL+205}" y="14" fill="#94a3b8" font-size="11">Neg Prob Mass</text>
-    <text x="${W/2}" y="${H-8}" fill="#cbd5e1" font-size="11" text-anchor="middle">Customer Turn Index</text>
+  return `
+    <svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;background:#ffffff;border:1px solid #e2e8f0;border-radius:8px">
+      ${gridLines}
+      <line x1="${padL}" y1="${threshY}" x2="${W - padR}" y2="${threshY}" stroke="#b91c1c" stroke-width="1.2" stroke-dasharray="5,4"/>
+      <text x="${W - padR - 4}" y="${Number(threshY) - 5}" fill="#b91c1c" font-size="10" font-weight="600" text-anchor="end">Alert Threshold (55%)</text>
+      <polyline fill="none" stroke="#64748b" stroke-width="1.8" points="${negPts}"/>
+      <polyline fill="none" stroke="#d97706" stroke-width="2.0" points="${cusPts}"/>
+      <polyline fill="none" stroke="#b91c1c" stroke-width="2.6" points="${hmmPts}"/>
+      ${hmmDots}
+      <rect x="${padL}" y="10" width="10" height="4" rx="2" fill="#b91c1c"/><text x="${padL + 14}" y="15" fill="#0f172a" font-size="10.5" font-weight="600">Hidden Markov Model Likelihood</text>
+      <rect x="${padL + 196}" y="10" width="10" height="4" rx="2" fill="#d97706"/><text x="${padL + 210}" y="15" fill="#0f172a" font-size="10.5">Cumulative Drift</text>
+      <rect x="${padL + 312}" y="10" width="10" height="4" rx="2" fill="#64748b"/><text x="${padL + 326}" y="15" fill="#0f172a" font-size="10.5">Negative Share</text>
+      ${xLabels}
+      <text x="${padL + pw / 2}" y="${H - 4}" fill="#475569" font-size="11" font-weight="600" text-anchor="middle">Customer Speaking Turn</text>
+    </svg>
   `;
 }
 
-function drawTransitionMatrix(labels, mat) {
-  if (!labels || !mat) return;
-  let html = '<table><thead><tr><th>From \\ To</th>' + labels.map(l => `<th>${l}</th>`).join('') + '</tr></thead><tbody>';
+function buildTransitionMatrixHtml(labels, mat) {
+  if (!labels || !mat) return '<p class="chart-subtitle">Transition data unavailable.</p>';
+  let html = '<div class="table-wrap"><table><thead><tr><th>From &rarr; To</th>' +
+    labels.map(l => `<th style="text-align:center">${fullEmotion(l)}</th>`).join('') +
+    '</tr></thead><tbody>';
   for (let r = 0; r < labels.length; r++) {
-    html += `<tr><th>${labels[r]}</th>` + mat[r].map(v => `<td>${(v*100).toFixed(0)}%</td>`).join('') + '</tr>';
+    html += `<tr><th>${fullEmotion(labels[r])}</th>` + mat[r].map(v => {
+      const p = Math.round(v * 100);
+      const bg = p > 0 ? `rgba(29, 78, 216, ${(0.06 + v * 0.28).toFixed(2)})` : 'transparent';
+      return `<td class="matrix-cell" style="background:${bg};color:${p >= 50 ? '#1e3a8a' : 'var(--text-body)'}">${p}%</td>`;
+    }).join('') + '</tr>';
   }
-  html += '</tbody></table>';
-  document.getElementById('trans-matrix').innerHTML = html;
+  html += '</tbody></table></div>';
+  return html;
 }
 
 async function uploadWav() {
   const inp = document.getElementById('wav-upload');
+  const btn = document.getElementById('upload-btn');
   const rm = document.getElementById('research-mode-chk').checked;
-  if (!inp.files.length) { alert('Choose a 16-bit PCM .wav file first.'); return; }
+  if (!inp.files.length) {
+    alert('Please choose a 16-bit Waveform Audio (.wav) file first.');
+    return;
+  }
   const f = inp.files[0];
-  const buf = await f.arrayBuffer();
-  const resp = await fetch('/api/analyze?researchMode=' + rm, {
-    method: 'POST',
-    headers: { 'X-Filename': f.name },
-    body: buf
-  });
-  const rep = await resp.json();
-  if (rep.error) { alert('Error: ' + rep.error); return; }
-  const convs = await fetch('/api/conversations').then(r => r.json());
-  populateConvSelect(convs);
-  document.getElementById('conv-select').value = rep.conversationId;
-  await loadConversation(rep.conversationId);
+  btn.disabled = true;
+  btn.textContent = 'Analyzing...';
+  try {
+    const buf = await f.arrayBuffer();
+    const resp = await fetch('/api/analyze?researchMode=' + rm, {
+      method: 'POST',
+      headers: { 'X-Filename': f.name },
+      body: buf
+    });
+    const rep = await resp.json();
+    if (rep.error) {
+      alert('Unable to analyze recording: ' + rep.error);
+      return;
+    }
+    const [ov, convs] = await Promise.all([
+      fetch('/api/overview').then(r => r.json()),
+      fetch('/api/conversations').then(r => r.json())
+    ]);
+    renderOverview(ov, convs);
+    populateConvSelect(convs);
+    document.getElementById('conv-select').value = rep.conversationId;
+    await loadConversation(rep.conversationId);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Analyze Recording';
+  }
 }
 
 function renderResearch(res) {
-  const exp = res.experimentResults;
-  if (!exp || exp.status === 'PENDING') {
-    document.getElementById('research-content').innerHTML = '<div class="card">Experiment results are PENDING.</div>';
+  const exp = res.experimentResults || {};
+  const ds = res.datasetStats || {};
+  if (exp.status === 'PENDING') {
+    document.getElementById('research-content').innerHTML = '<div class="card">Research benchmark results are currently being generated.</div>';
     return;
   }
-  const e2Rows = Object.entries(exp.e2_architectures || {}).map(([k, v]) => `
-    <tr><td><strong>${k}</strong></td><td>${((v.uar_mean ?? v.uar)*100).toFixed(2)}%</td><td>${((v.macro_f1_mean ?? v.macro_f1)*100).toFixed(2)}%</td><td>${((v.accuracy_mean ?? v.accuracy)*100).toFixed(2)}%</td><td>${v.params || '-'}</td><td>${v.train_time_s || '-'}s</td></tr>
+
+  const crema = ds.crema_d || {};
+  const rav = ds.ravdess || {};
+  const dlg = ds.crema_dialog || {};
+  const cvae = exp.e14_generative?.resnet_plus_cvae_aug || {};
+  const t4 = exp.e2_t4_resnet || {};
+  const hmmCtx = exp.e6_e7_context?.['HMM-Forward (Control)'] || {};
+  const noCtx = exp.e6_e7_context?.['No-Context (ResNet-SER)'] || {};
+  const d6 = exp.e11_escalation?.detectors?.['D6_TransformerHead (Context)'] || {};
+  const calBefore = exp.e12_calibration?.before || {};
+  const calAfter = exp.e12_calibration?.after || {};
+  const parity = exp.onnx_parity || {};
+
+  /* Section 3A: Feature comparison */
+  const e1Entries = Object.entries(exp.e1_features || {});
+  const e1Chart = horizontalBarSvg(
+    e1Entries.map(([k, v]) => ({ label: FEATURE_NAMES[k]?.split(' (')[0] || k, val: +(v.uar * 100).toFixed(2) })),
+    { valueMax: 60, suffix: '%' }
+  );
+  const e1Best = Math.max(...e1Entries.map(([, v]) => v.uar || 0));
+  const e1Rows = e1Entries.map(([k, v]) => `
+    <tr class="${Math.abs(v.uar - e1Best) < 1e-6 ? 'best-row' : ''}">
+      <td><strong>${FEATURE_NAMES[k] || k}</strong></td>
+      <td class="num">${pct(v.uar)}</td>
+      <td class="num">${pct(v.macro_f1)}</td>
+      <td class="num">${pct(v.accuracy)}</td>
+      <td class="num">${num(v.train_time_s, 1)} s</td>
+    </tr>
   `).join('');
 
-  const segRows = Object.entries(exp.e8_segdet || {}).map(([k, v]) => `
-    <tr><td><strong>${k}</strong></td><td>${v.task}</td><td>${(v['mAP@0.5']*100).toFixed(2)}%</td><td>${(v.event_f1*100).toFixed(2)}%</td><td>${(v.mean_iou*100).toFixed(1)}%</td><td>${v.latency_ms_per_stream} ms</td></tr>
+  /* Section 3B: Utterance models */
+  const e2Combined = [
+    ...Object.entries(exp.e2_architectures || {}).map(([k, v]) => ({
+      name: ARCH_NAMES[k] || k,
+      shortName: (ARCH_NAMES[k] || k).replace(/\s*\([^)]*\)/, ''),
+      uar: v.uar_mean ?? v.uar,
+      f1: v.macro_f1_mean ?? v.macro_f1,
+      acc: v.accuracy_mean ?? v.accuracy,
+      ece: v.ece
+    })),
+    ...(cvae.uar != null ? [{
+      name: 'Residual Neural Network + Autoencoder Data Augmentation',
+      shortName: 'Residual Network + Data Augmentation',
+      uar: cvae.uar,
+      f1: cvae.macro_f1,
+      acc: cvae.accuracy,
+      ece: cvae.ece
+    }] : [])
+  ];
+  const e2Best = Math.max(...e2Combined.map(x => x.uar || 0));
+  const e2Chart = horizontalBarSvg(
+    e2Combined.map(x => ({ label: x.shortName, val: +(x.uar * 100).toFixed(2) })),
+    { valueMax: 70, suffix: '%' }
+  );
+  const e2Rows = e2Combined.map(x => `
+    <tr class="${Math.abs(x.uar - e2Best) < 1e-6 ? 'best-row' : ''}">
+      <td><strong>${x.name}</strong></td>
+      <td class="num">${pct(x.uar)}</td>
+      <td class="num">${pct(x.f1)}</td>
+      <td class="num">${pct(x.acc)}</td>
+      <td class="num">${num(x.ece, 4)}</td>
+    </tr>
   `).join('');
 
-  const ctxRows = Object.entries(exp.e6_e7_context || {}).map(([k, v]) => `
-    <tr><td><strong>${k}</strong></td><td>${((v.uar_mean ?? v.uar)*100).toFixed(2)}%</td><td>${(v.macro_f1*100).toFixed(2)}%</td><td>${(v.turn_accuracy*100).toFixed(2)}%</td><td>${(v.norm_edit_similarity*100).toFixed(2)}%</td><td>${v.conversation_jsd.toFixed(4)}</td></tr>
+  /* Section 3C: Segmentation & Event Detection */
+  const segEntries = Object.entries(exp.e8_segdet || {});
+  const segBestMap = Math.max(...segEntries.map(([, v]) => v['mAP@0.5'] ?? 0));
+  const segChart = horizontalBarSvg(
+    segEntries.map(([k, v]) => ({ label: SEGDET_NAMES[k] || k, val: +((v['mAP@0.5'] ?? 0) * 100).toFixed(2) })),
+    { valueMax: 50, suffix: '%' }
+  );
+  const segRows = segEntries.map(([k, v]) => {
+    const taskFull = v.task === 'Semantic Segmentation' ? 'Frame-by-Frame Classification' : 'Emotional Turn Detection';
+    return `
+      <tr class="${Math.abs((v['mAP@0.5'] ?? 0) - segBestMap) < 1e-6 ? 'best-row' : ''}">
+        <td><strong>${SEGDET_NAMES[k] || k}</strong></td>
+        <td>${taskFull}</td>
+        <td class="num">${v.frame_accuracy != null ? pct(v.frame_accuracy) : '—'}</td>
+        <td class="num">${pct(v['mAP@0.5'])}</td>
+        <td class="num">${pct(v.event_f1)}</td>
+        <td class="num">${pct(v.mean_iou, 1)}</td>
+        <td class="num">${num(v.latency_ms_per_stream, 2)} ms</td>
+      </tr>
+    `;
+  }).join('');
+
+  /* Section 3D: Conversation context models */
+  const ctxEntries = Object.entries(exp.e6_e7_context || {});
+  const ctxBest = Math.max(...ctxEntries.map(([, v]) => (v.uar_mean ?? v.uar) || 0));
+  const ctxChart = horizontalBarSvg(
+    ctxEntries.map(([k, v]) => ({ label: (CTX_NAMES[k] || k).replace(/\s*\([^)]*\)/, ''), val: +(((v.uar_mean ?? v.uar) || 0) * 100).toFixed(2) })),
+    { valueMax: 80, suffix: '%' }
+  );
+  const ctxRows = ctxEntries.map(([k, v]) => {
+    const uarVal = v.uar_mean ?? v.uar;
+    return `
+      <tr class="${Math.abs(uarVal - ctxBest) < 1e-6 ? 'best-row' : ''}">
+        <td><strong>${CTX_NAMES[k] || k}</strong></td>
+        <td class="num">${pct(uarVal)}</td>
+        <td class="num">${pct(v.macro_f1)}</td>
+        <td class="num">${pct(v.turn_accuracy)}</td>
+        <td class="num">${pct(v.norm_edit_similarity)}</td>
+        <td class="num">${num(v.conversation_jsd, 4)}</td>
+      </tr>
+    `;
+  }).join('');
+
+  /* Section 3E: Escalation Detectors */
+  const escEntries = Object.entries(exp.e11_escalation?.detectors || {});
+  const escBest = Math.max(...escEntries.map(([, v]) => v.auroc || 0));
+  const escChart = horizontalBarSvg(
+    escEntries.map(([k, v]) => ({ label: ESC_DETECTOR_NAMES[k] || k, val: +v.auroc.toFixed(3) })),
+    { valueMax: 1.0, suffix: '' }
+  );
+  const escRows = escEntries.map(([k, v]) => `
+    <tr class="${Math.abs(v.auroc - escBest) < 1e-6 ? 'best-row' : ''}">
+      <td><strong>${ESC_DETECTOR_NAMES[k] || k}</strong></td>
+      <td class="num">${num(v.auroc, 4)}</td>
+      <td class="num">${num(v.auprc, 4)}</td>
+      <td class="num">${num(v.event_f1, 4)}</td>
+      <td class="num">${v.median_delay_turns} turns</td>
+      <td class="num">${num(v.false_alarm_rate_per_track, 3)}</td>
+    </tr>
   `).join('');
 
-  const escRows = Object.entries(exp.e11_escalation?.detectors || {}).map(([k, v]) => `
-    <tr><td><strong>${k}</strong></td><td>${v.auprc.toFixed(4)}</td><td>${v.auroc.toFixed(4)}</td><td>${v.event_f1.toFixed(4)}</td><td>${v.median_delay_turns}</td><td>${v.false_alarm_rate_per_track.toFixed(3)}</td></tr>
-  `).join('');
+  /* Section 4: Fairness & Robustness */
+  const fairness = exp.e9_fairness || {};
+  const fairRows = ['Sex', 'Age', 'Race'].flatMap(group =>
+    Object.entries(fairness[group] || {}).map(([sub, m]) => `
+      <tr>
+        <td><strong>${group}</strong></td>
+        <td>${sub}</td>
+        <td class="num">${m.n}</td>
+        <td class="num">${pct(m.uar)}</td>
+        <td class="num">${pct(m.macro_f1)}</td>
+      </tr>
+    `)
+  ).join('');
+
+  const robEntries = Object.entries(exp.e13_robustness || {});
+  const cc = exp.e10_cross_corpus_ravdess || {};
+  const robChart = horizontalBarSvg(
+    [
+      ...robEntries.map(([k, v]) => ({ label: ROBUST_NAMES[k] || k, val: +(v.uar * 100).toFixed(2) })),
+      ...(cc.t6_shared ? [{ label: 'Unseen Dataset (RAVDESS, 6 Emotions)', val: +(cc.t6_shared.uar * 100).toFixed(2), color: '#b45309' }] : []),
+      ...(cc.t4_core ? [{ label: 'Unseen Dataset (RAVDESS, 4 Core Emotions)', val: +(cc.t4_core.uar * 100).toFixed(2), color: '#0f766e' }] : [])
+    ],
+    { valueMax: 70, suffix: '%' }
+  );
+
+  /* Section 5: 7 SVG Figures */
+  const figCards = [
+    {
+      file: 'e1_e2_model_benchmark.svg',
+      title: 'Audio Feature and Model Comparison',
+      caption: 'Compares emotion recognition recall across audio input types and neural network architectures on unseen test speakers.',
+      tooltip: {
+        what: 'Accuracy across audio input formats and neural network model families tested on unseen speakers.',
+        axes: 'Horizontal: Model or audio representation · Vertical: Unweighted Average Recall (%).',
+        how: 'Taller bars show stronger overall ability to recognize all six vocal emotions equally.',
+        why: 'Shows why spectrogram-based Residual and Deep Convolutional networks beat hand-crafted voice features.'
+      }
+    },
+    {
+      file: 'e6_e7_context_and_agreement.svg',
+      title: 'Conversation History Impact by Speech Clarity',
+      caption: 'Illustrates how conversation context helps clarify emotionally ambiguous speaking turns where human listeners disagreed.',
+      tooltip: {
+        what: 'Emotion recognition accuracy grouped by whether human listeners found a clip easy or ambiguous to judge.',
+        axes: 'Horizontal: Listener agreement group and sequence model · Vertical: Unweighted Average Recall (%).',
+        how: 'The Hidden Markov Model raises recall across every agreement level, especially on ambiguous clips.',
+        why: 'Proves that looking at surrounding conversation turns resolves unclear isolated speech.'
+      }
+    },
+    {
+      file: 'e8_segdet_benchmark.svg',
+      title: 'Continuous Stream Detection vs Processing Speed',
+      caption: 'Compares how accurately each event detector locates emotional speech segments against its runtime per audio stream.',
+      tooltip: {
+        what: 'Accuracy vs speed comparison across six continuous audio segmentation and event-detection models.',
+        axes: 'Horizontal: Processing latency in milliseconds or detector family · Vertical: Event detection precision and F1 score.',
+        how: 'Models combining higher detection scores with single-digit millisecond latency offer the best practical balance.',
+        why: 'Guides selection of the Multi-Scale Feature Pyramid Detector (RetinaNet) for long multi-turn streams.'
+      }
+    },
+    {
+      file: 'conv_activations_gradcam.svg',
+      title: 'Where the Model Listens in a Spectrogram',
+      caption: 'Highlights the pitch harmonics and speech frequencies that most strongly influenced the network’s prediction.',
+      tooltip: {
+        what: 'Visual heatmaps overlaid on speech spectrograms showing which frequencies the Residual Network relied on.',
+        axes: 'Horizontal: Time across the speech clip · Vertical: Sound frequency bands (bottom = low pitch, top = high harmonics).',
+        how: 'Brighter highlighted zones indicate vocal energy bursts and pitch contours driving the decision.',
+        why: 'Confirms the model focuses on genuine voice characteristics rather than background silence.'
+      }
+    },
+    {
+      file: 'latent_space_and_activations.svg',
+      title: 'Internal Emotion Map and Neuron Responses',
+      caption: 'Visualizes how learned internal voice features group similar emotions together alongside classic neuron response curves.',
+      tooltip: {
+        what: 'A two-dimensional projection of learned voice embeddings alongside classical neuron activation shapes.',
+        axes: 'Scatter axes: Principal directions separating learned emotion clusters · Curve axes: Input signal vs neuron response.',
+        how: 'Tightly grouped same-colored clusters mean the network separates different emotions cleanly in memory.',
+        why: 'Helps verify that generated training examples stay aligned with real human vocal categories.'
+      }
+    },
+    {
+      file: 'confusion_matrix_and_calibration.svg',
+      title: 'Emotion Confusion Patterns and Confidence Calibration',
+      caption: 'Displays which emotions are most often mistaken for each other and how closely model confidence matches true accuracy.',
+      tooltip: {
+        what: 'Left: True vs predicted emotion grid. Right: Stated prediction confidence vs actual test accuracy.',
+        axes: 'Matrix: True emotion (rows) vs predicted emotion (columns). Curve: Stated confidence (horizontal) vs true accuracy (vertical).',
+        how: 'Strong diagonal squares indicate accurate predictions; points close to the diagonal dashed line show honest confidence scores.',
+        why: 'Calibration scaling reduced confidence error from 0.1378 down to 0.0708 so warning thresholds stay trustworthy.'
+      }
+    },
+    {
+      file: 'escalation_and_robustness.svg',
+      title: 'Escalation Detection Curves and Noise Stress Tests',
+      caption: 'Compares how quickly escalation detectors spot distress against how noise and telephone compression affect accuracy.',
+      tooltip: {
+        what: 'Receiver Operating Characteristic / Precision-Recall escalation curves alongside noise and phone-line degradation tests.',
+        axes: 'Curves: Recall vs false-positive/precision trade-offs · Bar chart: Background noise or phone bandwidth vs model recall (%).',
+        how: 'Curves bowed higher toward the top-left (for Receiver Operating Characteristic) indicate more reliable escalation ranking.',
+        why: 'Demonstrates that model accuracy holds under mild noise (20 dB) but requires phone-line retraining for 8 kHz calls.'
+      }
+    }
+  ].map(fig => chartCard({
+    headingTag: 'h4',
+    title: fig.title,
+    bodyHtml: `<div class="svg-frame"><img class="svg-fig" src="/api/figures/${fig.file}" alt="${fig.title}"/></div>`,
+    footerHtml: `<p class="caption-text">${fig.caption}</p>`,
+    tooltip: fig.tooltip
+  })).map(html => `<div class="card">${html}</div>`).join('');
+
+  const ciNoCtx = exp.h2_bootstrap_vs_nocontext || {};
+  const ciHmm = exp.h2_bootstrap_vs_hmm || {};
 
   document.getElementById('research-content').innerHTML = `
-    <div class="grid2">
-      <div class="card"><h3>E2: Utterance Architecture Benchmark (CREMA-D Speaker-Independent)</h3>
-        <table><thead><tr><th>Model</th><th>UAR</th><th>Macro-F1</th><th>Acc</th><th>Params</th><th>Time</th></tr></thead><tbody>${e2Rows}</tbody></table>
-      </div>
-      <div class="card"><h3>E8-SegDet: Segmentation &amp; Detection Benchmark</h3>
-        <table><thead><tr><th>Model</th><th>Task</th><th>mAP@0.5</th><th>Event F1</th><th>IoU</th><th>Latency</th></tr></thead><tbody>${segRows}</tbody></table>
+    <div class="section-header">
+      <h2>Research &amp; Benchmark Results</h2>
+      <p class="section-desc">Controlled speaker-independent evaluation comparing single-turn audio models, continuous event detectors, conversation context filters, and frustration escalation detectors.</p>
+    </div>
+
+    <!-- 1. EXPERIMENTAL METHODOLOGY -->
+    <div class="section-block">
+      <h3>1. Experimental Methodology</h3>
+      <p class="section-desc" style="margin-bottom:14px">Every test partition strictly separates speakers so no voice heard during training ever appears in testing.</p>
+      <div class="grid4">
+        <div class="kpi-card">
+          <div class="kpi-label">Primary Speech Dataset</div>
+          <div class="kpi-val">${(crema.valid_utterances || 7441).toLocaleString()} clips</div>
+          <p class="kpi-sub">CREMA-D corpus across ${crema.total_actors || 91} speakers split into ${crema.split_actors?.train || 61} training, ${crema.split_actors?.val || 15} validation, and ${crema.split_actors?.test || 15} held-out test speakers (zero speaker overlap).</p>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Cross-Dataset Check</div>
+          <div class="kpi-val">${(rav.valid_utterances || 1440).toLocaleString()} clips</div>
+          <p class="kpi-sub">Independent RAVDESS recordings (${rav.total_actors || 24} unseen speakers) used strictly for out-of-domain evaluation without blind label merging.</p>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Conversation &amp; Stream Study</div>
+          <div class="kpi-val">${dlg.total_dialogs || 380} dialogues</div>
+          <p class="kpi-sub">${dlg.test_dialogs || 80} held-out test calls (${dlg.escalating_test_dialogs || 28} escalating, ${dlg.non_escalating_test_dialogs || 52} stable) plus 285 continuous multi-turn audio streams.</p>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Java Runtime Verification</div>
+          <div class="kpi-val">${parity.resnet_max_diff != null ? parity.resnet_max_diff.toExponential(2) : '&lt; 0.0001'}</div>
+          <p class="kpi-sub">Maximum numerical difference between Python training and live Java inference; lower values prove identical behavior.</p>
+        </div>
       </div>
     </div>
-    <div class="grid2">
-      <div class="card"><h3>Stage C: Conversational Context Benchmark (CREMA-Dialog)</h3>
-        <table><thead><tr><th>Model</th><th>UAR</th><th>Macro-F1</th><th>Seq Acc</th><th>Edit Sim</th><th>JSD (lower=better)</th></tr></thead><tbody>${ctxRows}</tbody></table>
-        <p style="font-size:12px;color:var(--muted);margin-top:8px">H2 Bootstrap 95% CI vs No-Context: [${exp.h2_bootstrap_vs_nocontext.ci95_low}, ${exp.h2_bootstrap_vs_nocontext.ci95_high}], vs HMM: [${exp.h2_bootstrap_vs_hmm.ci95_low}, ${exp.h2_bootstrap_vs_hmm.ci95_high}]</p>
-      </div>
-      <div class="card"><h3>E11: Frustration Escalation Detectors</h3>
-        <table><thead><tr><th>Detector</th><th>AUPRC</th><th>AUROC</th><th>Event F1</th><th>Delay</th><th>FA/Track</th></tr></thead><tbody>${escRows}</tbody></table>
+
+    <!-- 2. KEY RESEARCH FINDINGS -->
+    <div class="section-block">
+      <h3>2. Key Research Findings</h3>
+      <p class="section-desc" style="margin-bottom:14px">Headline metrics measured on held-out test speakers and unseen multi-turn conversations.</p>
+      <div class="grid4">
+        <div class="kpi-card">
+          <div class="kpi-label">Unweighted Average Recall (6 Emotions)</div>
+          <div class="kpi-val" style="color:var(--ok)">${pct(cvae.uar)}</div>
+          <p class="kpi-sub">Residual Neural Network + Autoencoder Data Augmentation (reaches <strong>${pct(t4.uar)}</strong> across 4 core emotions). Average accuracy across every emotion equally.</p>
+          <span class="dir-tag">Higher is better</span>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Context-Aware Speech Recall</div>
+          <div class="kpi-val" style="color:var(--ok)">${pct(hmmCtx.uar)}</div>
+          <p class="kpi-sub">Hidden Markov Model temporal smoothing adds <strong>+14.8 percentage points</strong> over single-turn predictions (${pct(noCtx.uar)}) by using turn history.</p>
+          <span class="dir-tag">Higher is better</span>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Area Under Receiver Operating Characteristic Curve</div>
+          <div class="kpi-val">${num(d6.auroc, 4)}</div>
+          <p class="kpi-sub">Conversation Transformer Escalation Head (Precision-Recall Area: <strong>${num(d6.auprc, 4)}</strong>). Measures how reliably escalating calls rank above calm calls.</p>
+          <span class="dir-tag">Higher is better</span>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Expected Calibration Error</div>
+          <div class="kpi-val" style="color:var(--ok)">${num(cvae.ece, 4)}</div>
+          <p class="kpi-sub">Measures gap between model confidence and true accuracy. Temperature Scaling also cuts base error from ${num(calBefore.ece, 4)} to ${num(calAfter.ece, 4)}.</p>
+          <span class="dir-tag">Lower is better</span>
+        </div>
       </div>
     </div>
-    <div class="grid2">
-      <div class="card"><img class="svg-fig" src="/api/figures/e1_e2_model_benchmark.svg"/></div>
-      <div class="card"><img class="svg-fig" src="/api/figures/e6_e7_context_and_agreement.svg"/></div>
-      <div class="card"><img class="svg-fig" src="/api/figures/e8_segdet_benchmark.svg"/></div>
-      <div class="card"><img class="svg-fig" src="/api/figures/conv_activations_gradcam.svg"/></div>
-      <div class="card"><img class="svg-fig" src="/api/figures/latent_space_and_activations.svg"/></div>
-      <div class="card"><img class="svg-fig" src="/api/figures/confusion_matrix_and_calibration.svg"/></div>
-      <div class="card"><img class="svg-fig" src="/api/figures/escalation_and_robustness.svg"/></div>
+
+    <!-- 3. MODEL PERFORMANCE COMPARISONS -->
+    <div class="section-block">
+      <h3>3. Model Performance Comparisons</h3>
+
+      <div class="card">
+        <div class="grid2" style="margin-bottom:0">
+          <div>
+            ${chartCard({
+              title: 'A. Audio Feature Representations (Same Neural Network)',
+              subtitle: 'Tests which sound representation preserves emotional vocal cues best using the Basic Convolutional Network.',
+              bodyHtml: e1Chart,
+              tooltip: {
+                what: 'Unweighted Average Recall achieved by four standard ways of turning raw sound into numeric inputs.',
+                axes: 'Horizontal: Unweighted Average Recall (%) · Vertical: Audio feature representation.',
+                how: 'Longer bars preserve richer emotional voice cues across all six classes.',
+                why: 'Establishes why Logarithmic Mel Spectrograms were chosen for all downstream models.'
+              }
+            })}
+          </div>
+          <div>
+            <h4>Detailed Audio Feature Metrics (Higher Recall / F1 Score / Accuracy is Better)</h4>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Audio Representation</th>
+                    <th class="num">Unweighted Average Recall<small>Higher is better</small></th>
+                    <th class="num">Macro F1 Score<small>Higher is better</small></th>
+                    <th class="num">Overall Accuracy<small>Higher is better</small></th>
+                    <th class="num">Training Time</th>
+                  </tr>
+                </thead>
+                <tbody>${e1Rows}</tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="grid2" style="margin-bottom:0">
+          <div>
+            ${chartCard({
+              title: 'B. Single-Turn Speech Emotion Architectures',
+              subtitle: 'Compares 7 neural architectures on 1,228 spoken utterances from 15 unseen speakers.',
+              bodyHtml: e2Chart,
+              tooltip: {
+                what: 'Speaker-independent emotion recognition performance across hand-crafted feature networks, 2D/3D convolutional networks, and generative augmentation.',
+                axes: 'Horizontal: Unweighted Average Recall (%) · Vertical: Model architecture.',
+                how: 'Residual and Deep Convolutional networks substantially beat both the Multilayer Perceptron and Three-Dimensional Convolution.',
+                why: 'Confirms spectrogram-based Residual Networks capture emotional vocal tone best for single utterances.'
+              }
+            })}
+          </div>
+          <div>
+            <h4>Utterance Architecture Metrics</h4>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Architecture</th>
+                    <th class="num">Unweighted Average Recall<small>Higher is better</small></th>
+                    <th class="num">Macro F1 Score<small>Higher is better</small></th>
+                    <th class="num">Accuracy<small>Higher is better</small></th>
+                    <th class="num">Calibration Error<small>Lower is better</small></th>
+                  </tr>
+                </thead>
+                <tbody>${e2Rows}</tbody>
+              </table>
+            </div>
+            <div class="metric-guide">
+              <p><strong>Unweighted Average Recall:</strong> Average recognition rate across all six emotion types equally so common classes cannot mask errors on rarer emotions.</p>
+              <p><strong>Macro F1 Score:</strong> Combined precision and sensitivity averaged equally across all emotions (higher is better).</p>
+              <p><strong>Calibration Error:</strong> Gap between stated confidence and true accuracy (lower means more honest probability scores).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="grid2" style="margin-bottom:0">
+          <div>
+            ${chartCard({
+              title: 'C. Continuous Audio Segmentation & Event Detection',
+              subtitle: 'Evaluates frame-level segmentation and emotional turn-boundary detection across 60 continuous 10.24-second streams.',
+              bodyHtml: segChart,
+              tooltip: {
+                what: 'Mean Average Precision at 50% boundary overlap across six segmentation and event-detection architectures.',
+                axes: 'Horizontal: Mean Average Precision at 50% Overlap (%) · Vertical: Detector family.',
+                how: 'RetinaNet leads detection precision by down-weighting easy silence periods using Focal Loss.',
+                why: 'Shows which architecture locates emotional speech intervals inside longer continuous recordings most accurately.'
+              }
+            })}
+          </div>
+          <div>
+            <h4>Segmentation &amp; Event Detection Metrics</h4>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>Task</th>
+                    <th class="num">Frame Accuracy<small>Higher is better</small></th>
+                    <th class="num">Mean Average Precision (50% Overlap)<small>Higher is better</small></th>
+                    <th class="num">Event F1 Score<small>Higher is better</small></th>
+                    <th class="num">Boundary Overlap (Intersection over Union)<small>Higher is better</small></th>
+                    <th class="num">Stream Latency<small>Lower is better</small></th>
+                  </tr>
+                </thead>
+                <tbody>${segRows}</tbody>
+              </table>
+            </div>
+            <div class="finding-callout">
+              <strong>Key Comparison:</strong> Single-stage Multi-Scale Feature Pyramid Detection (RetinaNet) delivers the strongest overall event detection precision (42.94%) in 4.43 ms, while Learned Region Proposal Detection achieves the tightest boundary alignment (79.2% overlap).
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="grid2" style="margin-bottom:0">
+          <div>
+            ${chartCard({
+              title: 'D. Conversation Context Modelling (Multi-Turn Dialogues)',
+              subtitle: 'Tests whether reading surrounding turns improves accuracy over judging each utterance alone (80 test calls).',
+              bodyHtml: ctxChart,
+              tooltip: {
+                what: 'Unweighted Average Recall on 80 held-out multi-turn calls comparing isolated predictions, statistical Markov smoothing, and sequence neural networks.',
+                axes: 'Horizontal: Unweighted Average Recall (%) · Vertical: Context modelling approach.',
+                how: 'The Hidden Markov Model temporal filter reaches 66.45%, far above isolated predictions (51.62%) and overfitted sequence neural networks.',
+                why: 'Shows that conversational context is highly valuable, while small dialogue datasets (240 training calls) require lightweight statistical smoothing rather than heavy sequence networks.'
+              }
+            })}
+          </div>
+          <div>
+            <h4>Conversation Sequence Metrics</h4>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Context Method</th>
+                    <th class="num">Unweighted Average Recall<small>Higher is better</small></th>
+                    <th class="num">Macro F1 Score<small>Higher is better</small></th>
+                    <th class="num">Turn Accuracy<small>Higher is better</small></th>
+                    <th class="num">Sequence Similarity<small>Higher is better</small></th>
+                    <th class="num">Jensen-Shannon Divergence<small>Lower is better</small></th>
+                  </tr>
+                </thead>
+                <tbody>${ctxRows}</tbody>
+              </table>
+            </div>
+            <div class="finding-callout">
+              <strong>Statistical Finding (95% Confidence Intervals):</strong> Because only 240 conversations were available for sequence training, unconstrained Transformer emotion heads overfit (95% Confidence Interval vs Single-Turn: [${num(ciNoCtx.ci95_low, 3)}, ${num(ciNoCtx.ci95_high, 3)}]; vs Hidden Markov Model: [${num(ciHmm.ci95_low, 3)}, ${num(ciHmm.ci95_high, 3)}]). Using the Hidden Markov Model for emotion labels delivers reliable +14.8 percentage point context gains.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="grid2" style="margin-bottom:0">
+          <div>
+            ${chartCard({
+              title: 'E. Customer Frustration Escalation Detectors',
+              subtitle: 'Measures how reliably each detector distinguishes escalating frustration calls from calm conversations.',
+              bodyHtml: escChart,
+              tooltip: {
+                what: 'Area Under the Receiver Operating Characteristic Curve comparing 8 early-warning escalation detectors.',
+                axes: 'Horizontal: Discrimination score (0.50 = random guess, 1.00 = perfect separation) · Vertical: Escalation detector.',
+                how: 'Bars closer to 1.00 separate truly escalating calls from routine calls with fewer false alarms.',
+                why: 'Identifies the Learned Transformer Escalation Head as the strongest call-ranking signal and Audio Cumulative Sum as the lowest false-alarm trigger.'
+              }
+            })}
+          </div>
+          <div>
+            <h4>Escalation Ranking &amp; Alert Trade-Off Metrics</h4>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Escalation Detector</th>
+                    <th class="num">Area Under Receiver Operating Characteristic Curve<small>Higher is better</small></th>
+                    <th class="num">Area Under Precision-Recall Curve<small>Higher is better</small></th>
+                    <th class="num">Event F1 Score<small>Higher is better</small></th>
+                    <th class="num">Median Detection Delay<small>Closer to 0 is faster</small></th>
+                    <th class="num">False Alarms per Calm Call<small>Lower is better</small></th>
+                  </tr>
+                </thead>
+                <tbody>${escRows}</tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. FAIRNESS & ROBUSTNESS -->
+    <div class="section-block">
+      <h3>4. Speaker Group Fairness &amp; Real-World Audio Robustness</h3>
+      <p class="section-desc" style="margin-bottom:14px">Evaluates consistency across speaker demographics and measures accuracy under background noise, telephone bandwidth limits, and an unseen recording dataset.</p>
+      <div class="grid2">
+        <div class="card">
+          <h4>Performance Across Speaker Demographics (Calibrated Residual Network)</h4>
+          <p class="chart-subtitle" style="margin-bottom:12px">Higher and more uniform scores across demographic groups indicate lower model bias.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Demographic Group</th>
+                  <th>Subgroup</th>
+                  <th class="num">Test Clips</th>
+                  <th class="num">Unweighted Average Recall<small>Higher is better</small></th>
+                  <th class="num">Macro F1 Score<small>Higher is better</small></th>
+                </tr>
+              </thead>
+              <tbody>${fairRows}</tbody>
+            </table>
+          </div>
+          <div class="metric-guide">
+            <p>Observed subgroup recall ranges from 47.07% (ages 35–49) to 61.38% (ages 50+), with a 4.58 percentage point difference across sex and 3.51 percentage points across race groups.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          ${chartCard({
+            headingTag: 'h4',
+            title: 'Accuracy Under Noise, Phone Compression & Unseen Dataset',
+            subtitle: 'Stress test measuring how background noise and 8 kHz phone bandwidth affect vocal emotion recognition.',
+            bodyHtml: robChart,
+            footerHtml: '<p class="caption-text"><strong>Practical Takeaway:</strong> Accuracy remains steady under mild 20 dB noise (52.58% vs 54.35% clean) but drops noticeably at 10 dB noise or 8 kHz phone compression (35.85%), requiring telephony-band augmentation before live call-center deployment.</p>',
+            tooltip: {
+              what: 'Comparison of speech emotion recall across clean studio audio, noisy recordings, simulated 8 kHz telephone audio, and a separate dataset (RAVDESS).',
+              axes: 'Horizontal: Unweighted Average Recall (%) · Vertical: Recording test condition.',
+              how: 'Shorter bars show conditions where background static or lost high-frequency sound harms recognition.',
+              why: 'Clarifies where the model works reliably today versus where additional real call-center training data is needed.'
+            }
+          })}
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. VISUAL RESEARCH FIGURES -->
+    <div class="section-block">
+      <h3>5. Supporting Research Visualizations</h3>
+      <p class="section-desc" style="margin-bottom:14px">Detailed diagnostic plots exported from the experimental pipeline. Hover over or tap Guide on any figure for a plain-English explanation.</p>
+      <div class="grid2">${figCards}</div>
     </div>
   `;
 }
 
 function renderMath(ms) {
-  if (!ms || ms.status === 'PENDING') {
-    document.getElementById('math-content').innerHTML = '<div class="card">Math Sandbox results PENDING.</div>';
+  if (ms && ms.status === 'PENDING') {
+    document.getElementById('math-content').innerHTML = '<p class="section-desc">Sandbox visualizations are being generated.</p>';
     return;
   }
-  document.getElementById('math-content').innerHTML = `
-    <div class="card">
-      <h3>Java ser-math Verification &amp; Paradigms Summary</h3>
-      <p>Gradient Check Max Relative Error: <strong>${ms.gradientCheckMaxRelativeError}</strong> (${ms.gradientCheckNumParams} params, Passed=${ms.gradientCheckPassed}) |
-      Oja vs SVD Cosine Alignment: <strong>${ms.ojaPrincipalComponentAlignment.toFixed(5)}</strong> |
-      Hopfield Recovery Accuracy: <strong>${(ms.hopfieldRecoveryAccuracy*100).toFixed(0)}%</strong></p>
-      <p style="font-size:12.5px;color:#cbd5e1">Real CREMA-D Functionals Java MLP: ${JSON.stringify(ms.cremaRealMlp)}</p>
-    </div>
-    <div class="grid2">
-      <div class="card"><img class="svg-fig" src="/api/figures/math/activations_comparison.svg"/></div>
-      <div class="card"><img class="svg-fig" src="/api/figures/math/optimizer_convergence.svg"/></div>
-      <div class="card"><img class="svg-fig" src="/api/figures/math/svd_reconstruction.svg"/></div>
-      <div class="card"><img class="svg-fig" src="/api/figures/math/rbm_cd1_training.svg"/></div>
-      <div class="card"><img class="svg-fig" src="/api/figures/math/conv2d_freq_edges.svg"/></div>
-      <div class="card"><img class="svg-fig" src="/api/figures/math/conv3d_temporal_spectral.svg"/></div>
-    </div>
-  `;
+
+  const sandboxFigs = [
+    {
+      file: 'activations_comparison.svg',
+      title: 'How Artificial Neurons Respond to Signals',
+      desc: 'Compares four classic activation rules—from a sharp on/off switch (Step) to smooth curves (Sigmoid, Hyperbolic Tangent, and Rectified Linear Unit)—that control how strongly a neuron fires.',
+      tooltip: {
+        what: 'Mathematical response curves of four neuron activation functions across positive and negative inputs.',
+        axes: 'Horizontal: Total weighted input signal (-5 to +5) · Vertical: Neuron output signal.',
+        how: 'Step jumps abruptly at zero, Sigmoid stays between 0 and 1, Hyperbolic Tangent centers at 0, and Rectified Linear grows steadily for positive inputs.',
+        why: 'Smooth curves allow neural networks to learn gradually from mistakes instead of making all-or-nothing jumps.'
+      }
+    },
+    {
+      file: 'optimizer_convergence.svg',
+      title: 'Comparing How Optimization Methods Learn',
+      desc: 'Tracks training errors over time for four learning strategies, showing how momentum-based methods find an accurate solution faster and more steadily than basic step-by-step updates.',
+      tooltip: {
+        what: 'Training error reduction across 60 learning steps for Batch Gradient Descent, Stochastic Gradient Descent, Momentum, and Nesterov Acceleration.',
+        axes: 'Horizontal: Training iteration (Epoch) · Vertical: Prediction error (lower means more accurate).',
+        how: 'Steeper, lower curves reach accurate predictions in fewer training steps.',
+        why: 'Explains why momentum-accelerated learning reaches better solutions reliably.'
+      }
+    },
+    {
+      file: 'svd_reconstruction.svg',
+      title: 'Compressing Speech Patterns Without Losing Meaning',
+      desc: 'Shows how Singular Value Decomposition trims away minor details from a speech spectrogram while retaining the essential vocal harmonics needed to recognize sound.',
+      tooltip: {
+        what: 'Approximation error when reconstructing a speech spectrogram using only a small number of dominant mathematical components.',
+        axes: 'Horizontal: Number of retained components (Rank) · Vertical: Relative reconstruction error (%).',
+        how: 'Error drops sharply in the first 4 to 8 components, showing that speech energy concentrates in a few core patterns.',
+        why: 'Illustrates the mathematical principle behind dimensionality reduction and compact voice embeddings.'
+      }
+    },
+    {
+      file: 'rbm_cd1_training.svg',
+      title: 'Unsupervised Pattern Learning Through Energy Minimization',
+      desc: 'Illustrates a Restricted Boltzmann Machine learning to rebuild corrupted sound patterns from scratch, lowering its reconstruction error across training rounds.',
+      tooltip: {
+        what: 'Reconstruction error progression while an unsupervised energy-based network learns acoustic patterns without emotion labels.',
+        axes: 'Horizontal: Training round (Epoch) · Vertical: Mean squared reconstruction error.',
+        how: 'A steady downward slope shows the network is learning to faithfully reproduce typical input features.',
+        why: 'Demonstrates energy-based learning alongside classic supervised neural training.'
+      }
+    },
+    {
+      file: 'conv2d_freq_edges.svg',
+      title: 'How Sound Filters Spot Pitch and Frequency Shifts',
+      desc: 'Visualizes a two-dimensional filter scanning across a speech spectrogram to highlight abrupt changes in vocal pitch and harmonic bands over time.',
+      tooltip: {
+        what: 'Output of a two-dimensional horizontal edge filter applied directly to a spoken utterance spectrogram.',
+        axes: 'Horizontal: Time through the spoken utterance · Vertical: Sound frequency bands.',
+        how: 'Bright bands mark places where vocal pitch and energy shift rapidly, which often signal emotional emphasis.',
+        why: 'Shows intuitively how Convolutional Neural Networks detect meaningful patterns in audio visuals.'
+      }
+    },
+    {
+      file: 'conv3d_temporal_spectral.svg',
+      title: 'Tracking Sound Changes Across Both Time and Frequency',
+      desc: 'Shows how a three-dimensional filter examines loudness together with short-term changes in time and pitch, capturing dynamic voice tremors and inflection.',
+      tooltip: {
+        what: 'Combined feature map produced by a three-dimensional filter processing sound loudness alongside time and frequency derivatives.',
+        axes: 'Horizontal: Time frames · Vertical: Filtered frequency responses.',
+        how: 'Highlighted peaks capture places where sound energy and frequency both shift simultaneously.',
+        why: 'Visualizes how multi-channel filters examine dynamic speech movement rather than static snapshots.'
+      }
+    }
+  ];
+
+  const cards = sandboxFigs.map(fig => chartCard({
+    headingTag: 'h3',
+    title: fig.title,
+    bodyHtml: `<div class="svg-frame"><img class="svg-fig" src="/api/figures/math/${fig.file}" alt="${fig.title}"/></div>`,
+    footerHtml: `<p class="caption-text">${fig.desc}</p>`,
+    tooltip: fig.tooltip
+  })).map(html => `<div class="card">${html}</div>`).join('');
+
+  document.getElementById('math-content').innerHTML = `<div class="grid2">${cards}</div>`;
 }
 
 init();
